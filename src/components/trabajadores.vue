@@ -11,27 +11,69 @@
             type="text"
             v-model="searchQuery"
             placeholder="Buscar por ID, nombre, modelo o propietario"
-            class="form-control search-bar"
+            class="search-bar"
           />
-          <button @click="goToHojaServicio" class="btn btn-primary register-button">Registrar equipo nuevo</button>
+          <button @click="goToHojaServicio" class="register-button">Registrar equipo nuevo</button>
         </div>
       </div>
 
       <div class="content">
-        <h1 class="text-light">Equipos a tu cargo</h1>
+        <h1>Equipos a tu cargo</h1>
         <div class="equipment-container">
           <div
             v-for="equipo in filteredEquipos"
             :key="equipo.id"
-            class="card equipment-card"
+            class="equipment-card"
           >
-            <div class="card-body">
-              <h2 class="card-title">{{ equipo.nombre }}</h2>
+            <div class="equipment-info">
+              <h2>{{ equipo.nombre }}</h2>
+              <p><strong>Propietario:</strong> {{ equipo.propietario }}</p>
+              <p><strong>Última revisión:</strong> {{ equipo.ultimaRevision }}</p>
+              <button
+                type="button"
+                class="btn btn-info"
+                @click="showDetails(equipo)"
+                data-bs-toggle="modal"
+                :data-bs-target="'#modal' + equipo.id"
+              >
+                Ver detalles
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div
+        v-for="equipo in equipos"
+        :key="'modal' + equipo.id"
+        class="modal fade"
+        :id="'modal' + equipo.id"
+        tabindex="-1"
+        aria-labelledby="'modalLabel' + equipo.id"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" :id="'modalLabel' + equipo.id">{{ equipo.nombre }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
               <p><strong>Modelo:</strong> {{ equipo.modelo }}</p>
               <p><strong>Estado:</strong> {{ equipo.estado }}</p>
               <p><strong>Última revisión:</strong> {{ equipo.ultimaRevision }}</p>
               <p><strong>Propietario:</strong> {{ equipo.propietario }}</p>
-              <button @click="verDetalles(equipo.id)" class="btn btn-info">Ver detalles</button>
+              <p><strong>Descripción:</strong> {{ equipo.descripcion }}</p>
+            </div>
+            <div class="modal-footer">
+              <router-link
+                to="/detalles_equipo"
+                class="btn btn-primary"
+              >
+                Detalles específicos
+              </router-link>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
           </div>
         </div>
@@ -55,6 +97,7 @@ export default {
           estado: 'En reparación',
           ultimaRevision: '2024-08-25',
           propietario: 'Carlos Pérez',
+          descripcion: 'Laptop con pantalla de 15 pulgadas.',
         },
         {
           id: 2,
@@ -63,6 +106,7 @@ export default {
           estado: 'Listo para entrega',
           ultimaRevision: '2024-08-30',
           propietario: 'María López',
+          descripcion: 'Teléfono con cámara de 12 MP.',
         },
         // Más equipos
       ],
@@ -88,19 +132,20 @@ export default {
       router.push('/hoja_servicio');
     };
 
-    const verDetalles = (id) => {
-      router.push(`/detalle_equipo/${id}`);
+    const showDetails = (equipo) => {
+      console.log('Detalles del equipo:', equipo);
     };
 
     return {
       goToHojaServicio,
-      verDetalles,
+      showDetails,
     };
   },
 };
 </script>
 
 <style scoped>
+/* Los estilos permanecen igual que antes */
 .container {
   display: flex;
   justify-content: center;
@@ -131,12 +176,11 @@ export default {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 20px;
 }
 
 .logo-container {
   display: flex;
-  align-items: center;
+  justify-content: flex-start;
 }
 
 .logo {
@@ -151,12 +195,11 @@ export default {
 }
 
 .search-bar {
+  padding: 10px;
   border-radius: 20px;
   border: 2px solid #ccc;
-  padding: 10px;
   width: 300px;
   transition: border-color 0.3s ease;
-  font-size: 16px;
 }
 
 .search-bar:focus {
@@ -200,66 +243,37 @@ export default {
 }
 
 .equipment-card {
-  width: 250px;
-  max-width: 100%;
+  display: flex;
   background-color: #1a1a1a;
+  padding: 20px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   color: white;
-  display: flex;
+  width: 250px;
+  max-width: 100%;
   flex-direction: column;
-  padding: 20px;
+  text-align: left;
 }
 
-.card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
-
-.card-title {
-  margin-bottom: 15px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.card-body p {
-  margin: 5px 0;
-}
-
-.btn-info {
-  background-color: #17a2b8;
-  border-color: #17a2b8;
-  border-radius: 50px;
-  margin-top: 10px;
+.equipment-info h2 {
   margin-bottom: 10px;
 }
 
-.btn-info:hover {
-  background-color: #138496;
-  border-color: #117a8b;
+/* Estilos para el modal */
+.modal-content {
+  background-color: #1a1a1a;
+  color: white;
 }
 
-@media (max-width: 768px) {
-  .logo {
-    width: 20vw;
-    max-width: 120px;
-  }
-
-  .register-button {
-    width: auto;
-    font-size: 14px;
-    padding: 10px 20px;
-  }
-
-  .equipment-card {
-    width: 200px;
-  }
-
-  .search-bar {
-    width: 200px;
-  }
+.modal-header {
+  border-bottom: 1px solid #444;
 }
 
+.modal-footer {
+  border-top: 1px solid #444;
+}
+
+.modal-title {
+  color: #fff;
+}
 </style>
