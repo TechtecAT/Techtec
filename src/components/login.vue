@@ -1,36 +1,52 @@
 <template>
-    <div class="container">
+  <div class="container">
+    <Animacion />
 
-      <Animacion />
-  
-
-      <div class="window">
-
-        <div class="login-section">
-          <div class="login-form">
-            <h1>Iniciar sesión</h1>
-            <input type="email" placeholder="Introduce tu email" class="input-field" />
-            <input type="password" placeholder="Introduce tu contraseña" class="input-field" />
-            <button class="login-button">Iniciar sesión</button>
-          </div>
-        </div>
-  
-        <div class="image-section">
-          <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="image" />
+    <div class="window">
+      <div class="login-section">
+        <div class="login-form">
+          <h1>Iniciar sesión</h1>
+          <input v-model="email" type="email" placeholder="Introduce tu email" class="input-field" />
+          <input v-model="password" type="password" placeholder="Introduce tu contraseña" class="input-field" />
+          <button @click="handleLogin" class="login-button">Iniciar sesión</button>
         </div>
       </div>
+
+      <div class="image-section">
+        <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="image" />
+      </div>
     </div>
-  </template>
-  
-  <script>
-  import Animacion from '@/components/Animacion.vue'; 
-  
-  export default {
-    components: {
-      Animacion,
-    },
-  };
-  </script>
+  </div>
+</template>
+
+<script>
+import Animacion from '@/components/Animacion.vue';
+import { useRouter } from 'vue-router';
+
+export default {
+  components: {
+    Animacion,
+  },
+  data() {
+    return {
+      email: '',
+      password: '',
+    };
+  },
+  setup() {
+    const router = useRouter();
+    const handleLogin = () => {
+      // Aquí puedes agregar la lógica de autenticación
+      // Si la autenticación es exitosa, redirige a la página 'trabajadores'
+      router.push('/trabajadores');
+    };
+
+    return {
+      handleLogin,
+    };
+  },
+};
+</script>
   
   <style scoped>
   .container {

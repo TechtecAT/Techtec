@@ -1,87 +1,99 @@
 <template>
-    <div class="container">
-      <div class="window">
-        <!-- Contenedor para el logo, botón y barra de búsqueda -->
-        <div class="header-section">
-          <div class="logo-container">
-            <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="logo" />
-          </div>
-  
-          <!-- Barra de búsqueda y botón para registrar equipo nuevo -->
-          <div class="controls-container">
-            <input
-              type="text"
-              v-model="searchQuery"
-              placeholder="Buscar por ID, nombre, modelo o propietario"
-              class="search-bar"
-            />
-            <button class="register-button">Registrar equipo nuevo</button>
-          </div>
+  <div class="container">
+    <div class="window">
+      <div class="header-section">
+        <div class="logo-container">
+          <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="logo" />
         </div>
-  
-        <div class="content">
-          <h1>Equipos a tu cargo</h1>
-          <div class="equipment-container">
-            <div
-              v-for="equipo in filteredEquipos"
-              :key="equipo.id"
-              class="equipment-card"
-            >
-              <div class="equipment-info">
-                <h2>{{ equipo.nombre }}</h2>
-                <p><strong>Modelo:</strong> {{ equipo.modelo }}</p>
-                <p><strong>Estado:</strong> {{ equipo.estado }}</p>
-                <p><strong>Última revisión:</strong> {{ equipo.ultimaRevision }}</p>
-                <p><strong>Propietario:</strong> {{ equipo.propietario }}</p>
-              </div>
+
+        <div class="controls-container">
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Buscar por ID, nombre, modelo o propietario"
+            class="search-bar"
+          />
+          <button @click="goToHojaServicio" class="register-button">Registrar equipo nuevo</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <h1>Equipos a tu cargo</h1>
+        <div class="equipment-container">
+          <div
+            v-for="equipo in filteredEquipos"
+            :key="equipo.id"
+            class="equipment-card"
+          >
+            <div class="equipment-info">
+              <h2>{{ equipo.nombre }}</h2>
+              <p><strong>Modelo:</strong> {{ equipo.modelo }}</p>
+              <p><strong>Estado:</strong> {{ equipo.estado }}</p>
+              <p><strong>Última revisión:</strong> {{ equipo.ultimaRevision }}</p>
+              <p><strong>Propietario:</strong> {{ equipo.propietario }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        searchQuery: '',
-        equipos: [
-          {
-            id: 1,
-            nombre: 'Laptop Dell',
-            modelo: 'Inspiron 15',
-            estado: 'En reparación',
-            ultimaRevision: '2024-08-25',
-            propietario: 'Carlos Pérez',
-          },
-          {
-            id: 2,
-            nombre: 'iPhone 12',
-            modelo: 'A2172',
-            estado: 'Listo para entrega',
-            ultimaRevision: '2024-08-30',
-            propietario: 'María López',
-          },
-          // Más equipos
-        ],
-      };
+  </div>
+</template>
+
+<script>
+import { useRouter } from 'vue-router';
+
+export default {
+  data() {
+    return {
+      searchQuery: '',
+      equipos: [
+        {
+          id: 1,
+          nombre: 'Laptop Dell',
+          modelo: 'Inspiron 15',
+          estado: 'En reparación',
+          ultimaRevision: '2024-08-25',
+          propietario: 'Carlos Pérez',
+        },
+        {
+          id: 2,
+          nombre: 'iPhone 12',
+          modelo: 'A2172',
+          estado: 'Listo para entrega',
+          ultimaRevision: '2024-08-30',
+          propietario: 'María López',
+        },
+        // Más equipos
+      ],
+    };
+  },
+  computed: {
+    filteredEquipos() {
+      return this.equipos.filter((equipo) => {
+        const searchTerm = this.searchQuery.toLowerCase();
+        return (
+          equipo.id.toString().includes(searchTerm) ||
+          equipo.nombre.toLowerCase().includes(searchTerm) ||
+          equipo.modelo.toLowerCase().includes(searchTerm) ||
+          equipo.propietario.toLowerCase().includes(searchTerm)
+        );
+      });
     },
-    computed: {
-      filteredEquipos() {
-        return this.equipos.filter((equipo) => {
-          const searchTerm = this.searchQuery.toLowerCase();
-          return (
-            equipo.id.toString().includes(searchTerm) ||
-            equipo.nombre.toLowerCase().includes(searchTerm) ||
-            equipo.modelo.toLowerCase().includes(searchTerm) ||
-            equipo.propietario.toLowerCase().includes(searchTerm)
-          );
-        });
-      },
-    },
-  };
-  </script>
+  },
+  setup() {
+    const router = useRouter();
+    
+    const goToHojaServicio = () => {
+      router.push('/hoja_servicio');
+    };
+
+    return {
+      goToHojaServicio,
+    };
+  },
+};
+</script>
+
   
   <style scoped>
   .container {
