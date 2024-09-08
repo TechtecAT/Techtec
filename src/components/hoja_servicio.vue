@@ -117,13 +117,15 @@ export default {
 };
 </script>
 
+
+
 <style scoped>
+/* General styles */
 .full-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: rgb(0, 83, 123);
   background: radial-gradient(circle, rgba(0, 83, 123, 1) 0%, rgba(0, 33, 86, 1) 35%);
   padding: 20px;
 }
@@ -166,7 +168,7 @@ export default {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 30px;
-  background-color: rgb(255, 255, 255);
+  background-color: #fff;
   padding: 20px;
   border-radius: 15px;
   border: 5px solid #7b7a7a;
@@ -232,7 +234,7 @@ textarea {
   }
 }
 
-/* Estilos generales para los botones */
+/* General button styles */
 .btn {
   background-color: #4CAF50;
   color: white;
@@ -249,7 +251,7 @@ textarea {
   transform: scale(1.05);
 }
 
-/* Estilos específicos para el botón de regresar */
+/* Specific styles for the back button */
 .back-button {
   background-color: #ff4b4b;
 }
@@ -258,7 +260,7 @@ textarea {
   background-color: #ff1c1c;
 }
 
-/* Estilos específicos para los botones dentro del formulario */
+/* Button styles within the form */
 .form-buttons {
   display: flex;
   justify-content: space-between;
@@ -269,7 +271,7 @@ textarea {
   width: 45%;
 }
 
-/* Estilos específicos para impresión */
+/* Print styles */
 @media print {
   .full-page {
     background: none;
@@ -301,4 +303,3 @@ textarea {
   }
 }
 </style>
-
