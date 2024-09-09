@@ -70,6 +70,7 @@
               <router-link
                 to="/detalles_equipo"
                 class="btn btn-primary"
+                @click="handleLinkClick"
               >
                 Detalles específicos
               </router-link>
@@ -127,7 +128,15 @@ export default {
   },
   setup() {
     const router = useRouter();
-    
+
+    const handleLinkClick = () => {
+      // Cerrar todos los modales abiertos antes de navegar
+      document.querySelectorAll('.modal').forEach(modal => {
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        if (bsModal) bsModal.hide();
+      });
+    };
+
     const goToHojaServicio = () => {
       router.push('/hoja_servicio');
     };
@@ -139,6 +148,7 @@ export default {
     return {
       goToHojaServicio,
       showDetails,
+      handleLinkClick,
     };
   },
 };
@@ -250,30 +260,35 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   color: white;
   width: 250px;
-  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.equipment-info {
+  flex: 1;
+  display: flex;
   flex-direction: column;
-  text-align: left;
+  justify-content: space-between;
 }
 
-.equipment-info h2 {
-  margin-bottom: 10px;
+.btn-info {
+  background-color: #17a2b8;
+  border: none;
 }
 
-/* Estilos para el modal */
 .modal-content {
   background-color: #1a1a1a;
   color: white;
 }
 
 .modal-header {
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #343a40;
 }
 
 .modal-footer {
-  border-top: 1px solid #444;
+  border-top: 1px solid #343a40;
 }
 
-.modal-title {
-  color: #fff;
+.btn-close {
+  filter: invert(1);
 }
 </style>

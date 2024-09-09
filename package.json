@@ -13,8 +13,10 @@
     "bootstrap-vue": "^2.23.1",
     "dotenv": "^16.4.5",
     "vue": "^3.4.38",
+    "vue-carousel": "^0.18.0",
     "vue-router": "^4.4.3",
     "vue-smooth-dnd": "^0.8.1",
+    "vue3-carousel": "^0.3.3",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
