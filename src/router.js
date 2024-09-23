@@ -6,6 +6,7 @@ import Trello from './components/Trello.vue';
 import Trabajadores from './components/Trabajadores.vue';
 import HojaServicio from './components/Hoja_Servicio.vue';
 import DetallesEquipo from './components/Detalles_Equipo.vue';
+import TuEquipo from './components/Tu_Equipo.vue';
 
 const routes = [
   { path: '/', name: 'Inicio', component: Inicio },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/trabajadores', name: 'Trabajadores', component: Trabajadores },
   { path: '/hoja_servicio', name: 'HojaServicio', component: HojaServicio },
   { path: '/detalles_equipo', name: 'detalles_equipo', component: DetallesEquipo, props: true },
+  { path: '/tu_equipo', name: 'tu_equipo', component: TuEquipo },
 ];
 
 const router = createRouter({

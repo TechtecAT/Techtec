@@ -72,8 +72,12 @@
 
         <!-- Botones de imprimir y enviar -->
         <div class="form-buttons">
-          <button @click="imprimirFormulario" class="btn print-button">Imprimir</button>
-          <button @click="enviarFormulario" class="btn submit-button">Enviar</button>
+          <button @click="imprimirFormulario" class="btn print-button">
+            <img src="https://cdn-icons-png.flaticon.com/512/58/58458.png" alt="Imprimir" class="button-icon" />
+          </button>
+          <button @click="enviarFormulario" class="btn submit-button">
+            <img src="https://cdn-icons-png.flaticon.com/512/929/929900.png" alt="Enviar" class="button-icon" />
+          </button>
         </div>
       </div>
     </div>
@@ -116,8 +120,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style scoped>
 /* General styles */
@@ -269,6 +271,15 @@ textarea {
 
 .print-button, .submit-button {
   width: 45%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-icon {
+  width: 30px; /* Ajusta el tamaño de las imágenes según tus necesidades */
+  height: 30px;
 }
 
 /* Print styles */

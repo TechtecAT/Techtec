@@ -30,7 +30,19 @@ background: radial-gradient(circle, rgba(0,83,123,1) 0%, rgba(0,33,86,1) 35%);
   text-align: center;
 }
 
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 9px;
+  }
 
+  *::-webkit-scrollbar-track {
+    background: #1c1c1c;
+  }
 
+  *::-webkit-scrollbar-thumb {
+    background-color: #44a1f3;
+    border-radius: 6px;
+    border: 3px none #000000;
+  }
 
 </style>

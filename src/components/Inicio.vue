@@ -1,42 +1,56 @@
 <template>
-    <div class="container">
+  <div class="container">
+   
+    <div class="window">
+      <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="top-left-image" />
 
-      <Animacion />
-  
+      <a href="/login" rel="noopener noreferrer" class="enter-button-container">
+        <img src="https://triviaglobe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fenter.9bc9986f.png&w=640&q=75" alt="Enter Button" class="enter-button" />
+      </a>
 
-      <div class="window">
-
-        <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="top-left-image" />
-    
-
-        <a href="/login" target="_blank" rel="noopener noreferrer">
-          <img src="https://triviaglobe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fenter.9bc9986f.png&w=640&q=75" alt="Enter Button" class="enter-button" />
-        </a>
-    
-
-        <div class="content">
-          <h1>Consulta el estado de tu equipo</h1>
-          <div class="search-container">
-            <input type="text" placeholder="Introduce tu número de servicio..." class="search-bar" />
-            <div class="button-container">
-              <button class="search-button">Buscar</button>
-              <button class="no-service-button">No tengo mi número de servicio</button>
-            </div>
+      <div class="content">
+        <h1>Consulta el estado de tu equipo</h1>
+        <div class="search-container">
+          <input v-model="numeroServicio" type="text" placeholder="Introduce tu número de servicio..." class="search-bar" />
+          <div class="button-container">
+            <button @click="buscar" class="search-button">Buscar</button>
+            <button class="no-service-button">No tengo mi número de servicio</button>
           </div>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import Animacion from '@/components/Animacion.vue';
-  
-  export default {
-    components: {
-      Animacion,
+  </div>
+</template>
+
+<script>
+
+import { useRouter } from 'vue-router';
+
+export default {
+  components: {
+    
+  },
+  data() {
+    return {
+      numeroServicio: '', // Variable para almacenar el número de servicio ingresado
+    };
+  },
+  setup() {
+    const router = useRouter();
+    return { router };
+  },
+  methods: {
+    buscar() {
+      if (this.numeroServicio.trim()) {
+        this.router.push(`/tu_equipo?numero=${encodeURIComponent(this.numeroServicio)}`);
+      } else {
+        alert('Por favor, introduce un número de servicio.');
+      }
     },
-  };
-  </script>
+  },
+};
+</script>
+
   
   <style scoped>
   .container {
