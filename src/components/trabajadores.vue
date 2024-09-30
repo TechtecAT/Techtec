@@ -155,7 +155,6 @@ export default {
 </script>
 
 <style scoped>
-/* Los estilos permanecen igual que antes */
 .container {
   display: flex;
   justify-content: center;
