@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       equipo: null,
-      descripcionProblema: 'Pantalla rota debido a caída. Se requiere diagnóstico y reparación completa.', // Descripción precargada
+      descripcionProblema: 'Pantalla rota debido a caída. Se requiere diagnóstico y reparación completa.', 
       mantenimientoPasos: [
         { descripcion: 'Diagnóstico inicial', completado: false, detalle: 'Abrir el equipo y revisar componentes internos como tarjeta madre, batería, etc.' },
         { descripcion: 'Reemplazo de pantalla', completado: false, detalle: 'Desmontar la pantalla rota y colocar una nueva pantalla compatible.' },
