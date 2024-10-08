@@ -1,4 +1,5 @@
 <template>
+   <Animacion />
   <div class="container">
    
     <div class="window">
@@ -23,16 +24,16 @@
 </template>
 
 <script>
-
+import Animacion from '@/components/animacion.vue';
 import { useRouter } from 'vue-router';
 
 export default {
   components: {
-    
+    Animacion,
   },
   data() {
     return {
-      numeroServicio: '', // Variable para almacenar el número de servicio ingresado
+      numeroServicio: '', 
     };
   },
   setup() {

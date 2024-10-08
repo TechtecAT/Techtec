@@ -92,24 +92,44 @@ export default {
       searchQuery: '',
       equipos: [
         {
-          id: 1,
-          nombre: 'Laptop Dell',
-          modelo: 'Inspiron 15',
-          estado: 'En reparación',
-          ultimaRevision: '2024-08-25',
-          propietario: 'Carlos Pérez',
-          descripcion: 'Laptop con pantalla de 15 pulgadas.',
-        },
-        {
-          id: 2,
-          nombre: 'iPhone 12',
-          modelo: 'A2172',
-          estado: 'Listo para entrega',
-          ultimaRevision: '2024-08-30',
-          propietario: 'María López',
-          descripcion: 'Teléfono con cámara de 12 MP.',
-        },
-        // Más equipos
+  id: 3,
+  nombre: 'MacBook Pro',
+  modelo: 'M1 13-inch',
+  estado: 'En diagnóstico',
+  ultimaRevision: '2024-09-01',
+  propietario: 'Juan González',
+  descripcion: 'MacBook Pro con chip M1, 8GB de RAM.',
+},
+{
+  id: 4,
+  nombre: 'Samsung Galaxy S21',
+  modelo: 'SM-G991B',
+  estado: 'En reparación',
+  ultimaRevision: '2024-09-02',
+  propietario: 'Laura Martínez',
+  descripcion: 'Teléfono con pantalla de 6.2 pulgadas.',
+},
+{
+  id: 5,
+  nombre: 'Lenovo ThinkPad',
+  modelo: 'X1 Carbon Gen 9',
+  estado: 'Listo para entrega',
+  ultimaRevision: '2024-08-28',
+  propietario: 'Roberto Ramírez',
+  descripcion: 'Laptop ligera con procesador Intel Core i7.',
+},
+{
+  id: 6,
+  nombre: 'iPad Air',
+  modelo: 'A2316',
+  estado: 'En espera de piezas',
+  ultimaRevision: '2024-08-29',
+  propietario: 'Ana Torres',
+  descripcion: 'Tableta con pantalla de 10.9 pulgadas.',
+},
+
+
+        
       ],
     };
   },

@@ -149,7 +149,7 @@
               ></button>
             </div>
             <div class="modal-body">
-              <p>Aquí puedes ver detalles sobre el diagnóstico de tu equipo.</p>
+              <p>Diagnóstico de tu equipo.</p>
               <p>Diagnóstico: {{ selectedDevice.diagnosis }}</p>
               <p>Tipo de mantenimiento: {{ selectedDevice.maintenanceType }}</p>
             </div>
@@ -256,91 +256,76 @@ export default {
 </script>
 
 <style scoped>
-.container mt-5{
-  margin-top: 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  color: white;
-}
-
-.window {
+/* General container styling */
+.container {
   background-color: rgba(0, 0, 0, 0.575);
-  margin-bottom: 30px;
-  display: flex;
-  position: relative;
-  padding: 20px;
-  box-sizing: border-box;
-  border-radius: 15px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.719);
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  color: white;
+  color: #f8f9fa; 
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 900px;
+  margin: auto;
+  margin-bottom: 30px;
 }
 
-.modal-content{
-  background-color: rgba(0, 0, 0, 0.575);;
+/* Header section with logo */
+.header-section {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-h4, p, h5 {
-  color: white;
+.logo {
+  width: 150px;
+  height: auto;
 }
 
-input.form-control {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+/* Text and title styling */
+h4 {
+  color: #f8f9fa;
+  margin-bottom: 20px;
 }
 
-input.form-control::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+.text {
+  color: #ced4da;
+  font-size: 16px;
+  margin-bottom: 20px;
 }
 
-.button {
-margin-top: 10px;
-margin-bottom: 10px;
-margin-left: 10px;
-margin-right: 10px;
+/* Columns layout */
+.buscador-column,
+.progreso-column {
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: #ced4da;
 }
 
-button.btn-primary {
-  background-color: #00b4d8;
-  border: none;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
+.buscador-column h5,
+.progreso-column h5 {
+  color: #f8f9fa;
 }
 
-button.btn-outline-info {
-  color: #00b4d8;
-  border-color: #00b4d8;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
+/* Form styling */
+.form-control {
+  background-color: #f8f9fa;
+  color:  #1f2122;
+  border: 1px solid #495057;
+  border-radius: 50px;
 }
 
-button.btn-outline-info:hover {
-  background-color: #00b4d8;
-  color: white;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
+.form-control::placeholder {
+  color: #adb5bd;
 }
 
-.progress-bar {
-  background-color: #00b4d8;
+button {
+  color: #f8f9fa;
+  border-radius: 50px;
 }
 
-/* Estilos del timeline */
+/* Timeline styles */
 .timeline {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
+  padding-left: 0;
+  list-style: none;
 }
 
 .timeline-step {
@@ -350,20 +335,41 @@ button.btn-outline-info:hover {
 }
 
 .step-marker {
-  margin-right: 10px;
+  margin-right: 15px;
 }
 
 .complete-check {
-  color: #00b4d8;
+  color: #007bff;
 }
 
 .current-check {
-  color: #00b4d8;
-  animation: spin 1.5s linear infinite;
+  color: #53e2ff;
 }
 
 .pending-check {
-  color: gray;
+  color: #6c757d;
+}
+
+.complete-check, .current-check, .pending-check {
+  font-size: 1.5rem;
+}
+
+.current-check {
+  animation: spin 1.5s linear infinite;
+}
+
+.step-content {
+  flex-grow: 1;
+}
+
+.step-content h5 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.step-description {
+  font-size: 14px;
+  color: #ffffff;
 }
 
 @keyframes spin {
@@ -371,27 +377,68 @@ button.btn-outline-info:hover {
   100% { transform: rotate(360deg); }
 }
 
-.step-content h5 {
-  margin: 0;
-  font-size: 1.2rem;
+
+/* Progress bar */
+.progress {
+  height: 20px;
 }
 
-.step-description {
-  margin: 5px 0;
-}
-.header-section {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+.progress-bar {
+  font-size: 14px;
 }
 
-.logo-container {
-  display: flex;
-  justify-content: flex-start;
+/* Modals */
+.modal-content {
+  background-color: #343a40;
+  color: #f8f9fa;
 }
 
-.logo {
-  width: 10vw;
-  max-width: 150px;
+.modal-header .btn-close {
+  background-color: #495057;
+  border-radius: 50px;
 }
+
+/* Buttons */
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  border-radius: 50px;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  border-radius: 50px;
+  margin-left: 5px;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  border: none;
+  border-radius: 50px;
+  margin-right: 5px;
+}
+
+/* Ensure text is readable */
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+}
+
+h4, h5 {
+  font-weight: 600;
+}
+
+/* Media queries for responsive layout */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .col-md-6 {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
 </style>

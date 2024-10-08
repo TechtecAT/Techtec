@@ -14,8 +14,8 @@
         </div>
       </div>
 
-      <!-- Secciones de drag and drop -->
-      <div class="row justify-content-between">
+      <!-- Secciones de drag and drop con scroll horizontal -->
+      <div class="drag-container">
         <!-- Equipos Recien Ingresados -->
         <div class="col-md-2">
           <h5 class="column-title">Equipos Recien Ingresados</h5>
@@ -210,72 +210,80 @@ export default {
 </script>
 
 <style scoped>
-/* Estilo principal del contenedor (fondo negro flexible) */
+/* Contenedor principal con fondo oscuro y ajuste de padding */
 .main-container {
-  background: rgb(0, 83, 123);
-  background: radial-gradient(circle, rgba(0, 83, 123, 1) 0%, rgba(0, 33, 86, 1) 35%);
+  color: #f8f9fa; 
   padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  height: 100vh; 
+  overflow-y: auto; 
 }
 
-/* Contenedor interno */
+/* Contenedor interno que organiza el contenido */
 .inner-container {
+  flex-direction: column;
+  align-items: center;
+  padding-left: 20px;
+  height: 800px;
+  border-radius: 15px;
   background-color: rgba(0, 0, 0, 0.575);
-  padding: 30px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 1200px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.719);
 }
 
-/* Logo */
+/* Estilo del logo */
 .logo {
-  max-width: 150px;
+  max-width: 200px; 
   height: auto;
 }
 
-/* Títulos de las columnas */
+/* Títulos de columnas */
 .column-title {
-  background-color: #007bff;
-  color: white;
+  color: #ffffff;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Contenedor para las columnas de drag-and-drop con scroll horizontal */
+.drag-container {
+  display: flex;
+  justify-content: flex-start;
+  overflow-x: auto; 
+  width: 100%; 
+  padding-bottom: 20px;
+}
+
+/* Listas del drag-and-drop */
+.list-group {
   padding: 10px;
   border-radius: 8px;
-  text-align: center;
-  margin-bottom: 20px;
+  max-height: 350px; 
+  overflow-y: auto; 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin: 0 10px;
+  min-width: 200px; 
 }
 
-/* Estilos para cada item de la lista */
-.list-group-item {
-  margin-bottom: 15px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+/* Estilo de los elementos arrastrables */
+.draggable-item {
+  background-color: #1a1a1a;
+  color: #ffffff; 
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  cursor: move;
+  transition: transform 0.2s ease;
 }
 
-.list-group-item:hover {
-  background-color: #f1f1f1;
+.draggable-item:hover {
   transform: scale(1.05);
 }
 
-.draggable-item {
-  font-size: 1.1rem;
-  color: #333;
-}
-
-/* Modal */
 .modal-content {
-  border-radius: 15px;
+  background-color: #2c2c2c;
+  color: #f8f9fa;
 }
 
-.modal-header {
-  background-color: #007bff;
-  color: white;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+.modal-header, .modal-footer {
+  border-color: #444;
 }
 </style>
