@@ -18,29 +18,64 @@
       </div>
 
       <div class="content">
-        <h1>Equipos a tu cargo</h1>
-        <div class="equipment-container">
-          <div
-            v-for="equipo in filteredEquipos"
-            :key="equipo.id"
-            class="equipment-card"
-          >
-            <div class="equipment-info">
-              <h2>{{ equipo.nombre }}</h2>
-              <p><strong>Propietario:</strong> {{ equipo.propietario }}</p>
-              <p><strong>Última revisión:</strong> {{ equipo.ultimaRevision }}</p>
-              <button
-                type="button"
-                class="btn btn-info"
-                @click="showDetails(equipo)"
-                data-bs-toggle="modal"
-                :data-bs-target="'#modal' + equipo.id"
-              >
-                Ver detalles
-              </button>
-            </div>
-          </div>
-        </div>
+        <h1>Equipos</h1>
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre del Equipo</th>
+              <th>Estado</th>
+              <th>Ubicación</th>
+              <th>Fecha de Registro</th>
+              <th>Etiquetas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="equipo in orderedEquipos" :key="equipo.id">
+              <td>{{ equipo.id }}</td>
+              <td>{{ equipo.nombre }}</td>
+              <td>{{ equipo.estado }}</td>
+              <td>
+                <select v-model="equipo.ubicacion" @change="updateUbicacion(equipo)">
+                  <option value="Sin asignar">Sin asignar</option>
+                  <option value="En espera">En espera</option>
+                  <option value="Trabajador 1">Trabajador 1</option>
+                  <option value="Trabajador 2">Trabajador 2</option>
+                  <option value="Almacén">Almacén</option>
+                  <option value="Listo para entrega">Listo para entrega</option>
+                </select>
+              </td>
+              <td>{{ equipo.fechaRegistro }}</td>
+              <td>
+                <select v-model="equipo.etiqueta" @change="updateEtiqueta(equipo)">
+                  <option value="Urgente">Urgente</option>
+                  <option value="No urgente">No urgente</option>
+                  <option value="Poco urgente">Poco urgente</option>
+                  <option value="Personalizada">Personalizada</option>
+                </select>
+                <input
+                  v-if="equipo.etiqueta === 'Personalizada'"
+                  type="text"
+                  v-model="equipo.etiquetaPersonalizada"
+                  placeholder="Etiqueta personalizada"
+                  @input="updateEtiqueta(equipo)"
+                />
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-info"
+                  @click="showDetails(equipo)"
+                  data-bs-toggle="modal"
+                  :data-bs-target="'#modal' + equipo.id"
+                >
+                  Ver detalles
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- Modal -->
@@ -63,7 +98,10 @@
               <p><strong>Modelo:</strong> {{ equipo.modelo }}</p>
               <p><strong>Estado:</strong> {{ equipo.estado }}</p>
               <p><strong>Última revisión:</strong> {{ equipo.ultimaRevision }}</p>
+              <p><strong>Ubicación:</strong> {{ equipo.ubicacion }}</p>
               <p><strong>Propietario:</strong> {{ equipo.propietario }}</p>
+              <p><strong>Fecha de Registro:</strong> {{ equipo.fechaRegistro }}</p>
+              <p><strong>Etiqueta:</strong> {{ equipo.etiqueta === 'Personalizada' ? equipo.etiquetaPersonalizada : equipo.etiqueta }}</p>
               <p><strong>Descripción:</strong> {{ equipo.descripcion }}</p>
             </div>
             <div class="modal-footer">
@@ -92,44 +130,57 @@ export default {
       searchQuery: '',
       equipos: [
         {
-  id: 3,
-  nombre: 'MacBook Pro',
-  modelo: 'M1 13-inch',
-  estado: 'En diagnóstico',
-  ultimaRevision: '2024-09-01',
-  propietario: 'Juan González',
-  descripcion: 'MacBook Pro con chip M1, 8GB de RAM.',
-},
-{
-  id: 4,
-  nombre: 'Samsung Galaxy S21',
-  modelo: 'SM-G991B',
-  estado: 'En reparación',
-  ultimaRevision: '2024-09-02',
-  propietario: 'Laura Martínez',
-  descripcion: 'Teléfono con pantalla de 6.2 pulgadas.',
-},
-{
-  id: 5,
-  nombre: 'Lenovo ThinkPad',
-  modelo: 'X1 Carbon Gen 9',
-  estado: 'Listo para entrega',
-  ultimaRevision: '2024-08-28',
-  propietario: 'Roberto Ramírez',
-  descripcion: 'Laptop ligera con procesador Intel Core i7.',
-},
-{
-  id: 6,
-  nombre: 'iPad Air',
-  modelo: 'A2316',
-  estado: 'En espera de piezas',
-  ultimaRevision: '2024-08-29',
-  propietario: 'Ana Torres',
-  descripcion: 'Tableta con pantalla de 10.9 pulgadas.',
-},
-
-
-        
+          id: 3,
+          nombre: 'MacBook Pro',
+          modelo: 'M1 13-inch',
+          estado: 'En diagnóstico',
+          ultimaRevision: '2024-09-01',
+          propietario: 'Juan González',
+          ubicacion: 'Trabajador 1',
+          fechaRegistro: '2024-07-15',
+          etiqueta: 'Urgente',
+          etiquetaPersonalizada: '',
+          descripcion: 'MacBook Pro con chip M1, 8GB de RAM.',
+        },
+        {
+          id: 4,
+          nombre: 'Samsung Galaxy S21',
+          modelo: 'SM-G991B',
+          estado: 'En reparación',
+          ultimaRevision: '2024-09-02',
+          propietario: 'Laura Martínez',
+          ubicacion: 'Trabajador 2',
+          fechaRegistro: '2024-08-01',
+          etiqueta: 'Urgente',
+          etiquetaPersonalizada: '',
+          descripcion: 'Teléfono con pantalla de 6.2 pulgadas.',
+        },
+        {
+          id: 5,
+          nombre: 'Lenovo ThinkPad',
+          modelo: 'X1 Carbon Gen 9',
+          estado: 'Listo para entrega',
+          ultimaRevision: '2024-08-28',
+          propietario: 'Roberto Ramírez',
+          ubicacion: 'Almacén',
+          fechaRegistro: '2024-08-20',
+          etiqueta: 'No urgente',
+          etiquetaPersonalizada: '',
+          descripcion: 'Laptop ligera con procesador Intel Core i7.',
+        },
+        {
+          id: 6,
+          nombre: 'iPad Air',
+          modelo: 'A2316',
+          estado: 'En espera de piezas',
+          ultimaRevision: '2024-08-29',
+          propietario: 'Ana Torres',
+          ubicacion: 'Sin asignar',
+          fechaRegistro: '2024-09-01',
+          etiqueta: 'Poco urgente',
+          etiquetaPersonalizada: '',
+          descripcion: 'Tableta con pantalla de 10.9 pulgadas.',
+        },
       ],
     };
   },
@@ -145,12 +196,14 @@ export default {
         );
       });
     },
+    orderedEquipos() {
+      return this.filteredEquipos.sort((a, b) => new Date(a.fechaRegistro) - new Date(b.fechaRegistro));
+    },
   },
   setup() {
     const router = useRouter();
 
     const handleLinkClick = () => {
-      // Cerrar todos los modales abiertos antes de navegar
       document.querySelectorAll('.modal').forEach(modal => {
         const bsModal = bootstrap.Modal.getInstance(modal);
         if (bsModal) bsModal.hide();
@@ -165,10 +218,20 @@ export default {
       console.log('Detalles del equipo:', equipo);
     };
 
+    const updateEtiqueta = (equipo) => {
+      console.log(`Etiqueta actualizada para el equipo ${equipo.id}: ${equipo.etiqueta === 'Personalizada' ? equipo.etiquetaPersonalizada : equipo.etiqueta}`);
+    };
+
+    const updateUbicacion = (equipo) => {
+      console.log(`Ubicación actualizada para el equipo ${equipo.id}: ${equipo.ubicacion}`);
+    };
+
     return {
       goToHojaServicio,
       showDetails,
       handleLinkClick,
+      updateEtiqueta,
+      updateUbicacion,
     };
   },
 };
@@ -226,77 +289,39 @@ export default {
 .search-bar {
   padding: 10px;
   border-radius: 20px;
-  border: 2px solid #ccc;
-  width: 300px;
-  transition: border-color 0.3s ease;
-}
-
-.search-bar:focus {
-  border-color: #007bff;
-  outline: none;
+  border: 2px solid black;
+  font-size: 1.1em;
 }
 
 .register-button {
+  padding: 10px;
+  border-radius: 50px;
+  border: 2px solid black;
   background-color: #007bff;
   color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 25px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.register-button:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+  font-weight: 600;
 }
 
 .content {
+  margin-top: 20px;
+  width: 100%;
+  color: white;
+}
+
+.table {
+  margin-top: 40px;
+  width: 100%;
   text-align: center;
-  color: white;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
 }
 
-.equipment-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  width: 100%;
-  max-height: 70vh;
-  overflow-y: auto;
-  padding: 10px;
-}
-
-.equipment-card {
-  display: flex;
-  background-color: #1a1a1a;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-  color: white;
-  width: 250px;
-  box-sizing: border-box;
-}
-
-.equipment-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.btn-info {
-  background-color: #17a2b8;
-  border: none;
+.table th,
+.table td {
+  padding: 12px;
 }
 
 .modal-content {
-  background-color: #1a1a1a;
-  color: white;
+  background-color: #343a40;
+  color: #fff;
 }
 
 .modal-header {
@@ -307,7 +332,50 @@ export default {
   border-top: 1px solid #343a40;
 }
 
-.btn-close {
-  filter: invert(1);
+.btn-primary {
+  border-radius: 50px;
+  background-color: #007bff;
 }
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-radius: 50px;
+}
+
+/* Estilo para el select */
+select {
+  padding: 6px;
+  font-size: 0.9rem;
+  background-color: #343a40;
+  border: 1px solid #ced4da;
+  color: white;
+  border-radius: 50px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Input personalizado */
+input[type="text"] {
+  padding: 6px;
+  font-size: 0.9rem;
+  border: 1px solid #ced4da;
+  border-radius: 50px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  max-width: 200px;
+}
+
+input[type="text"]:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+
 </style>
