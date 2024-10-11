@@ -3,10 +3,11 @@ import mysql from 'mysql2';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
+// Crear la aplicación Express
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors()); 
+app.use(cors()); // Habilita CORS
 
 // Configurar la conexión a la base de datos
 const db = mysql.createConnection({
@@ -42,7 +43,7 @@ app.get('/api/agregados', (req, res) => {
     });
   });
 
-  app.get('/api/clientes', (req, res) => {
+  app.get('/api/clientes2', (req, res) => {
     db.query('SELECT * FROM   CLIENTES', (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json(results);
@@ -125,7 +126,7 @@ app.post('/api/clientes', (req, res) => {
   
   app.post('/api/tipos_servicio', (req, res) => {
     const { servicio, idTipoEquipo } = req.body;
-    db.query('INSERT INTO tipos_servicio (servicio) VALUES (?)', 
+    db.query('INSERT INTO tipos_servicio (servicio, id_tipo_equipo) VALUES (?, ?)', 
     [servicio, idTipoEquipo], 
     (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -168,10 +169,6 @@ app.post('/api/servicio', (req, res) => {
     });
   });
   
-  
-
-
-
   app.post('/submitForm', async (req, res) => {
     const { cliente, celular, equipo, servicio } = req.body;
 
@@ -243,7 +240,126 @@ app.post('/api/servicio', (req, res) => {
 });
 
 
+// Endpoints para CRUD
 
+// 1. Obtener todos los datos de clientes con sus equipos, servicios y trabajadores
+app.get('/api/clientes', (req, res) => {
+  const query = `
+      SELECT clientes.id_cliente, 
+             clientes.nombre, 
+             clientes.apellido_paterno, 
+             clientes.apellido_materno, 
+             clientes.domicilio, 
+             clientes.email,
+             celulares.celular,
+             equipo.marca, 
+             equipo.serie, 
+             equipo.modelo, 
+             equipo.descripcion, 
+             equipo.estado, 
+             equipo.descripcion_agregado,
+             tipos_equipo.equipo AS tipo_equipo,
+             agregados.tipo_agregado,
+             servicio.observaciones, 
+             servicio.tiempo_entrega, 
+             servicio.medida_tiempo, 
+             tipos_servicio.servicio AS tipo_servicio,
+            trabajadores.nombre AS trabajador_nombre,
+            CONCAT(trabajadores.apellido_paterno, ' ', trabajadores.apellido_materno) AS trabajador_apellido
+      FROM clientes
+      LEFT JOIN celulares ON clientes.id_cliente = celulares.id_cliente
+      LEFT JOIN servicio ON clientes.id_cliente = servicio.id_cliente
+      LEFT JOIN equipo ON servicio.id_equipo = equipo.id_equipo
+      LEFT JOIN tipos_equipo ON equipo.id_tipo_equipo = tipos_equipo.id_tipo_equipo
+      LEFT JOIN agregados ON equipo.id_agregados = agregados.id_agregados
+      LEFT JOIN tipos_servicio ON servicio.id_tipo_servicio = tipos_servicio.id_tipo_servicio
+      LEFT JOIN trabajadores ON servicio.id_trabajador = trabajadores.id_trabajador
+      ORDER BY clientes.id_cliente;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) throw err;
+
+    // Agrupar celulares por cliente
+    const clientes = {};
+    
+    results.forEach(row => {
+      const { id_cliente, nombre, apellido_paterno, apellido_materno, domicilio, email, celular, marca, serie, modelo, descripcion, estado, descripcion_agregado, tipo_equipo, tipo_agregado, observaciones, tiempo_entrega, medida_tiempo, tipo_servicio, trabajador_nombre, trabajador_apellido } = row;
+
+      // Si el cliente no está en el objeto, lo inicializamos
+      if (!clientes[id_cliente]) {
+        clientes[id_cliente] = {
+          id_cliente,
+          nombre,
+          apellido_paterno,
+          apellido_materno,
+          domicilio,
+          email,
+          celulares: [],
+          servicios: []
+        };
+      }
+
+      // Agregar el celular si existe
+      if (celular) {
+        clientes[id_cliente].celulares.push(celular);
+      }
+
+      // Agregar el servicio si existe
+      if (observaciones) {
+        clientes[id_cliente].servicios.push({
+          marca,
+          serie,
+          modelo,
+          descripcion,
+          estado,
+          descripcion_agregado,
+          tipo_equipo,
+          tipo_agregado,
+          observaciones,
+          tiempo_entrega,
+          medida_tiempo,
+          tipo_servicio,
+          trabajador: {
+            nombre: trabajador_nombre,
+            apellido: trabajador_apellido
+          }
+        });
+      }
+    });
+
+    // Convertir el objeto a un array
+    res.json(Object.values(clientes));
+  });
+});
+
+app.delete('/api/clientes/:id', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    // Primero, elimina los celulares del cliente
+    await db.promise().query('DELETE FROM celulares WHERE id_cliente = ?', [id]);
+
+    // Luego, obtiene los id_equipo relacionados con los servicios del cliente
+    const [servicios] = await db.promise().query('SELECT id_equipo FROM servicio WHERE id_cliente = ?', [id]);
+    
+    // Elimina los servicios del cliente
+    await db.promise().query('DELETE FROM servicio WHERE id_cliente = ?', [id]);
+
+    // Elimina los equipos del cliente usando la tabla servicio
+    for (const servicio of servicios) {
+      await db.promise().query('DELETE FROM equipo WHERE id_equipo = ?', [servicio.id_equipo]);
+    }
+
+    // Finalmente, elimina al cliente
+    await db.promise().query('DELETE FROM clientes WHERE id_cliente = ?', [id]);
+
+    res.status(200).json({ message: 'Cliente eliminado correctamente.' });
+  } catch (error) {
+    console.error('Error al eliminar el cliente:', error);
+    res.status(500).json({ message: 'Error al eliminar el cliente.' });
+  }
+});
 
 
 

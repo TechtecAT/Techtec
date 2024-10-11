@@ -1,18 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Inicio from './components/Inicio.vue';
-import Animacion from './components/Animacion.vue';
-import Login from './components/Login.vue';
+import Animacion from './components/animacion.vue';
+import Login from './components/login.vue';
+import crud from './components/crud.vue';
 
-import Trabajadores from './components/Trabajadores.vue';
-import HojaServicio from './components/Hoja_Servicio.vue';
-import DetallesEquipo from './components/Detalles_Equipo.vue';
-import TuEquipo from './components/Tu_Equipo.vue';
-import Admin from './components/Admin.vue';
+
+import Trabajadores from './components/trabajadores.vue';
+import HojaServicio from './components/hoja_servicio.vue';
+import DetallesEquipo from './components/detalles_equipo.vue';
+import TuEquipo from './components/trabajadores.vue';
+import Admin from './components/admin.vue';
 
 const routes = [
   { path: '/', name: 'Inicio', component: Inicio },
   { path: '/animacion', name: 'Animacion', component: Animacion },
   { path: '/login', name: 'Login', component: Login },
+  {path: '/crud', name: 'crud', component: crud},
+    { path: '/login', name: 'Login', component: Login },
+
 
   { path: '/trabajadores', name: 'Trabajadores', component: Trabajadores },
   { path: '/hoja_servicio', name: 'HojaServicio', component: HojaServicio },

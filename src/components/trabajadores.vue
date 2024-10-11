@@ -1,259 +1,161 @@
 <template>
-  <div class="container-fluid">
-    <div class="row justify-content-center align-items-center vh-100">
-      <div class="col-12 col-md-10 col-lg-8 window">
-        <div class="header-section row">
-          <div class="col-12 col-md-6 logo-container">
-            <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="logo" />
-          </div>
+  <div class="container">
+    <header class="header">
+      <h1>Dashboard de Clientes y Servicios</h1>
+      <input
+        type="text"
+        placeholder="Buscar"
+        class="search-input"
+        v-model="searchQuery"
+      />
+    </header>
 
-          <div class="col-12 col-md-6 controls-container mt-3 mt-md-0">
-            <input
-              type="text"
-              v-model="searchQuery"
-              placeholder="Buscar por ID, nombre, modelo o propietario"
-              class="form-control search-bar"
-            />
-            <button @click="goToHojaServicio" class="btn btn-primary register-button mt-2 mt-md-0">Registrar equipo nuevo</button>
-          </div>
-        </div>
-
-        <div class="content mt-4">
-          <h1 class="text-center">Equipos</h1>
-          <div class="table-responsive">
-            <table class="table table-dark table-hover text-center">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre del Equipo</th>
-                  <th>Estado</th>
-                  <th>Ubicación</th>
-                  <th>Fecha de Registro</th>
-                  <th>Etiquetas</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="equipo in orderedEquipos" :key="equipo.id">
-                  <td>{{ equipo.id }}</td>
-                  <td>{{ equipo.nombre }}</td>
-                  <td>{{ equipo.estado }}</td>
-                  <td>
-                    <select v-model="equipo.ubicacion" @change="updateUbicacion(equipo)" class="form-select">
-                      <option value="Sin asignar">Sin asignar</option>
-                      <option value="En espera">En espera</option>
-                      <option value="Trabajador 1">Trabajador 1</option>
-                      <option value="Trabajador 2">Trabajador 2</option>
-                      <option value="Almacén">Almacén</option>
-                      <option value="Listo para entrega">Listo para entrega</option>
-                    </select>
-                  </td>
-                  <td>{{ equipo.fechaRegistro }}</td>
-                  <td>
-                    <select v-model="equipo.etiqueta" @change="updateEtiqueta(equipo)" class="form-select">
-                      <option value="Urgente">Urgente</option>
-                      <option value="No urgente">No urgente</option>
-                      <option value="Poco urgente">Poco urgente</option>
-                      <option value="Personalizada">Personalizada</option>
-                    </select>
-                    <input
-                      v-if="equipo.etiqueta === 'Personalizada'"
-                      type="text"
-                      v-model="equipo.etiquetaPersonalizada"
-                      placeholder="Etiqueta personalizada"
-                      class="form-control mt-2"
-                      @input="updateEtiqueta(equipo)"
-                    />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-info"
-                      @click="showDetails(equipo)"
-                      data-bs-toggle="modal"
-                      :data-bs-target="'#modal' + equipo.id"
-                    >
-                      Ver detalles
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Modales para cada equipo -->
-        <div
-          v-for="equipo in equipos"
-          :key="'modal' + equipo.id"
-          class="modal fade"
-          :id="'modal' + equipo.id"
-          tabindex="-1"
-          aria-labelledby="'modalLabel' + equipo.id"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" :id="'modalLabel' + equipo.id">{{ equipo.nombre }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <p><strong>Modelo:</strong> {{ equipo.modelo }}</p>
-                <p><strong>Estado:</strong> {{ equipo.estado }}</p>
-                <p><strong>Última revisión:</strong> {{ equipo.ultimaRevision }}</p>
-                <p><strong>Ubicación:</strong> {{ equipo.ubicacion }}</p>
-                <p><strong>Propietario:</strong> {{ equipo.propietario }}</p>
-                <p><strong>Fecha de Registro:</strong> {{ equipo.fechaRegistro }}</p>
-                <p><strong>Etiqueta:</strong> {{ equipo.etiqueta === 'Personalizada' ? equipo.etiquetaPersonalizada : equipo.etiqueta }}</p>
-                <p><strong>Descripción:</strong> {{ equipo.descripcion }}</p>
-              </div>
-              <div class="modal-footer">
-                <router-link
-                  to="/detalles_equipo"
-                  class="btn btn-primary"
-                  @click="closeModalAndNavigate"
-                >
-                  Detalles específicos
-                </router-link>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="participant-table">
+          <thead>
+            <tr>
+              <th>Nombre del Cliente</th>
+              <th>Domicilio</th>
+              <th>Email</th>
+              <th>Celulares</th>
+              <th>Marca del Equipo</th>
+              <th>Serie</th>
+              <th>Modelo</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Servicio</th>
+              <th>Trabajador</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="cliente in paginatedClientes" :key="cliente.id_cliente">
+              <td @dblclick="editField('nombre', cliente)">{{ cliente.nombre }} {{ cliente.apellido_paterno }} {{ cliente.apellido_materno }}</td>
+              <td @dblclick="editField('domicilio', cliente)">{{ cliente.domicilio }}</td>
+              <td @dblclick="editField('email', cliente)">{{ cliente.email }}</td>
+              <td>
+                <ul>
+                  <li v-for="(celular, index) in cliente.celulares" :key="index">
+                    <span @dblclick="editField('celular', cliente)">{{ celular }}</span>
+                  </li>
+                </ul>
+              </td>
+              <td v-if="cliente.servicios.length > 0" @dblclick="editField('marca', cliente.servicios[0])">{{ cliente.servicios[0].marca }}</td>
+              <td v-if="cliente.servicios.length > 0" @dblclick="editField('serie', cliente.servicios[0])">{{ cliente.servicios[0].serie }}</td>
+              <td v-if="cliente.servicios.length > 0" @dblclick="editField('modelo', cliente.servicios[0])">{{ cliente.servicios[0].modelo }}</td>
+              <td v-if="cliente.servicios.length > 0" @dblclick="editField('descripcion', cliente.servicios[0])">{{ cliente.servicios[0].descripcion }}</td>
+              <td v-if="cliente.servicios.length > 0" @dblclick="editField('estado', cliente.servicios[0])">{{ cliente.servicios[0].estado }}</td>
+              <td v-if="cliente.servicios.length > 0" @dblclick="editField('observaciones', cliente.servicios[0])">{{ cliente.servicios[0].observaciones }}</td>
+              <td v-if="cliente.servicios.length > 0" @dblclick="openWorkerModal(cliente)">{{ cliente.servicios[0].trabajador.nombre }} {{ cliente.servicios[0].trabajador.apellido }}</td>
+              <td>
+                <button @click="eliminarCliente(cliente.id_cliente)" class="delete-button">
+                  <img src="https://cdn-icons-png.flaticon.com/512/484/484662.png" alt="Eliminar" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
+
+    <div class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Siguiente</button>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'; // Agregado computed
-import { useRouter } from 'vue-router';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 
 export default {
-  setup() {
-    const router = useRouter();
-    const searchQuery = ref('');
-    const equipos = ref([
-      {
-        id: 3,
-        nombre: 'MacBook Pro',
-        modelo: 'M1 13-inch',
-        estado: 'En diagnóstico',
-        ultimaRevision: '2024-09-01',
-        propietario: 'Juan González',
-        ubicacion: 'Trabajador 1',
-        fechaRegistro: '2024-07-15',
-        etiqueta: 'Urgente',
-        etiquetaPersonalizada: '',
-        descripcion: 'MacBook Pro con chip M1, 8GB de RAM.',
-      },
-      {
-        id: 4,
-        nombre: 'Samsung Galaxy S21',
-        modelo: 'SM-G991B',
-        estado: 'En reparación',
-        ultimaRevision: '2024-09-02',
-        propietario: 'Laura Martínez',
-        ubicacion: 'Trabajador 2',
-        fechaRegistro: '2024-08-01',
-        etiqueta: 'Urgente',
-        etiquetaPersonalizada: '',
-        descripcion: 'Teléfono con pantalla de 6.2 pulgadas.',
-      },
-      {
-        id: 5,
-        nombre: 'Lenovo ThinkPad',
-        modelo: 'X1 Carbon Gen 9',
-        estado: 'Listo para entrega',
-        ultimaRevision: '2024-08-28',
-        propietario: 'Roberto Ramírez',
-        ubicacion: 'Almacén',
-        fechaRegistro: '2024-08-20',
-        etiqueta: 'No urgente',
-        etiquetaPersonalizada: '',
-        descripcion: 'Laptop ligera con procesador Intel Core i7.',
-      },
-      {
-        id: 6,
-        nombre: 'iPad Air',
-        modelo: 'A2316',
-        estado: 'En espera de piezas',
-        ultimaRevision: '2024-08-29',
-        propietario: 'Ana Torres',
-        ubicacion: 'Sin asignar',
-        fechaRegistro: '2024-09-01',
-        etiqueta: 'Poco urgente',
-        etiquetaPersonalizada: '',
-        descripcion: 'Tableta con pantalla de 10.9 pulgadas.',
-      },
-    ]);
-
-    const closeModalAndNavigate = () => {
-      document.querySelectorAll('.modal').forEach(modal => {
-        const bsModal = bootstrap.Modal.getInstance(modal);
-        if (bsModal) bsModal.hide();
-      });
-      
-      const backdrop = document.querySelector('.modal-backdrop');
-      if (backdrop) {
-        backdrop.remove();
-      }
-
-      router.push('/hoja_servicio');
-    };
-
-    watch(() => router.currentRoute.value, () => {
-      document.querySelectorAll('.modal').forEach(modal => {
-        const bsModal = bootstrap.Modal.getInstance(modal);
-        if (bsModal) bsModal.hide();
-      });
-      
-      const backdrop = document.querySelector('.modal-backdrop');
-      if (backdrop) {
-        backdrop.remove();
-      }
-    });
-
-    const showDetails = (equipo) => {
-      console.log('Detalles del equipo:', equipo);
-    };
-
-    const updateEtiqueta = (equipo) => {
-      console.log(`Etiqueta actualizada para el equipo ${equipo.id}: ${equipo.etiqueta === 'Personalizada' ? equipo.etiquetaPersonalizada : equipo.etiqueta}`);
-    };
-
-    const updateUbicacion = (equipo) => {
-      console.log(`Ubicación actualizada para el equipo ${equipo.id}: ${equipo.ubicacion}`);
-    };
-
-    const orderedEquipos = computed(() => {
-      return equipos.value
-        .filter(
-          (equipo) =>
-            equipo.id.toString().includes(searchQuery.value) ||
-            equipo.nombre.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            equipo.modelo.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            equipo.propietario.toLowerCase().includes(searchQuery.value.toLowerCase())
-        )
-        .sort((a, b) => a.id - b.id);
-    });
-
-    const goToHojaServicio = () => {
-      router.push('/hoja_servicio');
-    };
-
+  data() {
     return {
-      equipos,
-      searchQuery,
-      showDetails,
-      updateEtiqueta,
-      updateUbicacion,
-      closeModalAndNavigate,
-      goToHojaServicio,
-      orderedEquipos,
+      clientes: [],
+      trabajadores: [],
+      currentPage: 1,
+      itemsPerPage: 5,
+      editing: false,
+      editFieldType: '',
+      editValue: {},
+      currentCliente: null,
+      workerModal: false,
+      searchQuery: '',
     };
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.filteredClientes.length / this.itemsPerPage);
+    },
+    paginatedClientes() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.filteredClientes.slice(start, start + this.itemsPerPage);
+    },
+    filteredClientes() {
+      const query = this.searchQuery.toLowerCase();
+      return this.clientes.filter(cliente => {
+        const fullName = `${cliente.nombre} ${cliente.apellido_paterno} ${cliente.apellido_materno}`.toLowerCase();
+        const celulares = cliente.celulares.join(' ').toLowerCase();
+        const servicios = cliente.servicios.length > 0 ? cliente.servicios[0] : {};
+        return (
+          fullName.includes(query) ||
+          cliente.domicilio.toLowerCase().includes(query) ||
+          cliente.email.toLowerCase().includes(query) ||
+          celulares.includes(query) ||
+          servicios.marca?.toLowerCase().includes(query) ||
+          servicios.serie?.toLowerCase().includes(query) ||
+          servicios.modelo?.toLowerCase().includes(query) ||
+          servicios.descripcion?.toLowerCase().includes(query) ||
+          servicios.estado?.toLowerCase().includes(query) ||
+          servicios.observaciones?.toLowerCase().includes(query) ||
+          (servicios.trabajador && `${servicios.trabajador.nombre} ${servicios.trabajador.apellido}`.toLowerCase().includes(query))
+        );
+      });
+    },
+  },
+  methods: {
+    async cargarClientes() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/clientes');
+        this.clientes = response.data;
+      } catch (error) {
+        console.error('Error al cargar los clientes:', error);
+      }
+    },
+    async cargarTrabajadores() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/trabajadores');
+        this.trabajadores = response.data;
+      } catch (error) {
+        console.error('Error al cargar los trabajadores:', error);
+      }
+    },
+    async eliminarCliente(id) {
+      if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+        try {
+          await axios.delete(`http://localhost:3000/api/clientes/${id}`);
+          this.cargarClientes();
+        } catch (error) {
+          console.error('Error al eliminar el cliente:', error);
+        }
+      }
+    },
+    
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+  },
+  mounted() {
+    this.cargarClientes();
   },
 };
 </script>
