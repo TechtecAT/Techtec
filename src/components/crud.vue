@@ -1,12 +1,13 @@
 <template>
   <div class="container">
     <header class="header">
-      <h1>Dashboard de Clientes y Servicios</h1>
+      <h1>Clientes y Servicios</h1>
       <input 
         type="text" 
         placeholder="Buscar por nombre, celular o equipo" 
         class="search-input" 
-        v-model="searchQuery"
+        v-model="searchQuery" 
+        @input="resetPage"
       />
     </header>
 
@@ -131,6 +132,10 @@ export default {
     },
   },
   methods: {
+    // Restablecer a la primera página cuando se realiza una búsqueda
+    resetPage() {
+      this.currentPage = 1;
+    },
     async cargarClientes() {
       try {
         const response = await axios.get('http://localhost:3000/api/clientes');
@@ -165,7 +170,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .container {

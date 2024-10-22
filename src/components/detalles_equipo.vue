@@ -56,25 +56,44 @@
           <span class="label">Propietario:</span>
           <span class="value">{{ equipo.propietario }}</span>
         </div>
+        <div class="detail-item">
+          <span class="label">numero:</span>
+          <span class="value">{{ equipo.numero }}</span>
+        </div>
       </div>
 
-      <!-- Descripción del problema (precargada y no editable) -->
+      <!-- Descripción del problema -->
       <div class="detail-item">
         <span class="label">Descripción del problema:</span>
         <textarea v-model="descripcionProblema" disabled rows="3"></textarea>
       </div>
       
-      <!-- Sección de mantenimiento sin modales -->
+      <!-- Sección de servicio -->
       <div class="maintenance-section">
-        <h2>Mantenimiento</h2>
+        <h2>Servicio</h2>
         <ul>
-          <li v-for="(paso, index) in mantenimientoPasos" :key="index">
+          <li 
+            v-for="(paso, index) in mantenimientoPasos" 
+            :key="index"
+            @mouseover="mostrarDetalle(paso)" 
+            @mouseleave="ocultarDetalle"
+            style="position: relative;"
+          >
             <input 
               type="checkbox" 
               v-model="paso.completado" 
               :disabled="!puedeCompletarPaso(index)" 
             />
             <span :class="{ completed: paso.completado }">{{ paso.descripcion }}</span>
+
+            <!-- Ventana emergente (tooltip) -->
+            <div 
+              v-if="pasoMostrado === paso"
+              class="tooltip"
+              style="position: absolute; top: 20px; left: 150px; background-color: #f0f0f0; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"
+            >
+              {{ paso.detalle }}
+            </div>
           </li>
         </ul>
         <button @click="subirInforme" class="submit-button">Subir Informe</button>
@@ -98,6 +117,7 @@ export default {
         { descripcion: 'Pruebas de funcionalidad', completado: false, detalle: 'Encender el equipo y verificar que la pantalla y demás componentes funcionen adecuadamente.' },
         { descripcion: 'Limpieza final', completado: false, detalle: 'Limpiar el equipo tanto por fuera como por dentro, y realizar un pulido si es necesario.' },
       ],
+      pasoMostrado: null, // Variable para saber qué paso está siendo mostrado
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -105,24 +125,28 @@ export default {
       vm.updateEquipo();
     });
   },
-
-  
   methods: {
-    
+    mostrarDetalle(paso) {
+      this.pasoMostrado = paso;
+    },
+    ocultarDetalle() {
+      this.pasoMostrado = null;
+    },
     updateEquipo() {
       this.equipo = this.getEquipo();
     },
     getEquipo() {
       return {
-        nombre: 'Laptop Dell',
-        modelo: 'Inspiron 15',
+        nombre: 'Laptop Msi',
+        modelo: 'Msi Gf63',
         estado: 'En reparación',
-        ultimaRevision: '2024-08-25',
-        propietario: 'Carlos Pérez',
+        ultimaRevision: '2024-09-16',
+        propietario: 'Tadeo Martinez',
+        numero: '951 396 9605',
         fotos: [
-          'https://http2.mlstatic.com/D_NQ_NP_2X_704019-MLU77801295055_072024-F.webp',
-          'https://http2.mlstatic.com/D_NQ_NP_2X_703158-MLU77801156511_072024-F.webp',
-          'https://http2.mlstatic.com/D_NQ_NP_2X_797428-MLU77582865016_072024-F.webp',
+          'https://http2.mlstatic.com/D_NQ_NP_2X_839299-MLM73906886025_012024-F.webp',
+          'https://http2.mlstatic.com/D_NQ_NP_2X_979819-MLM75962726731_042024-F.webp',
+          'https://http2.mlstatic.com/D_NQ_NP_2X_622676-MLM75792648390_042024-F.webp',
         ],
       };
     },
@@ -279,4 +303,13 @@ textarea {
   background-color: #0056b3;
   transform: scale(1.05);
 }
+
+.tooltip {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
 </style>
