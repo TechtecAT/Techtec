@@ -10,6 +10,7 @@ import TuEquipo from './components/tu_equipo.vue';
 import Admin from './components/admin.vue';
 import Altaservicio from './components/alta_servicio.vue';
 import servicio from './components/servicio.vue';
+import cotizacion from './components/cotizacion.vue';
 
 const routes = [
   { path: '/', name: 'Inicio', component: Inicio },
@@ -24,6 +25,7 @@ const routes = [
   { path: '/admin', name: 'admin', component: Admin },
   { path: '/altaServicio' , name: 'alta_servicio', component: Altaservicio},
   { path: '/Servicio' , name: 'servicio', component: servicio},
+  { path: '/Cotizacion' , name: 'cotizacion', component: cotizacion},
 ];
 
 const router = createRouter({
