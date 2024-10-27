@@ -1,20 +1,20 @@
 <template>
   <div class="container">
-    
-
     <div class="window">
       <button class="back-button" @click="goBack">
-      ←
-    </button>
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
       <div class="login-section">
         <div class="login-form">
-          <h1>Iniciar sesión</h1>
-          <input v-model="email" type="email" placeholder="Introduce tu email" class="input-field" />
-          <input v-model="password" type="password" placeholder="Introduce tu contraseña" class="input-field" />
-          <button @click="handleLogin" class="login-button">Iniciar sesión</button>
+          <h1>Login</h1>
+          <input v-model="user" type="text" placeholder="User..." class="input-field" />
+          <input v-model="password" type="password" placeholder="Password" class="input-field" />
+          <button @click="handleLogin" class="login-button">
+            <span class="material-symbols-outlined">check</span>
+          </button>
+          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p> <!-- Mensaje de error -->
         </div>
       </div>
-
       <div class="image-section">
         <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="image" />
       </div>
@@ -24,25 +24,53 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import { ref } from 'vue'; // Importa ref
+import axios from 'axios'; // Importa axios
 
 export default {
-  data() {
-    return {
-      email: '',
-      password: '',
-    };
-  },
   setup() {
     const router = useRouter();
-    const handleLogin = () => {
-      router.push('/trabajadores');
-    };
+
+    // Define las propiedades reactivas con ref
+    const user = ref('');
+    const password = ref('');
+    const errorMessage = ref(''); // Para mostrar mensajes de error
+
+   // Método de login en Vue.js
+const handleLogin = async () => {
+  errorMessage.value = ''; // Reinicia el mensaje de error
+
+  try {
+    const response = await axios.post('http://localhost:3000/api/login', {
+      user: user.value,
+      password: password.value,
+    });
+
+    // Guardar el token y el ID del usuario en localStorage
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('userId', response.data.userId);
+
+    // Redirigir al panel principal después del login exitoso
+    router.push('/panel');
+  } catch (error) {
+    if (error.response) {
+      errorMessage.value = error.response.data.message;
+    } else {
+      errorMessage.value = 'Error de conexión, intenta de nuevo';
+    }
+  }
+};
+
+
 
     const goBack = () => {
       router.push('/');
     };
 
     return {
+      user,
+      password,
+      errorMessage,
       handleLogin,
       goBack,
     };
@@ -56,8 +84,6 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: rgb(0,83,123);
-  background: radial-gradient(circle, rgba(0,83,123,1) 0%, rgba(0,33,86,1) 35%);
   position: relative;
 }
 
@@ -69,7 +95,7 @@ export default {
   max-height: 1200px;
   position: relative;
   border-radius: 15px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.719);
+  box-shadow: 12px 13px 15px -4px rgba(0, 0, 0, 0.4);
 }
 
 .back-button {
@@ -81,10 +107,13 @@ export default {
   color: white;
   font-size: 24px;
   cursor: pointer;
+  display: flex;
+  padding: 12px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .back-button:hover {
-  color: #007bff;
+  transform: scale(1.1);
 }
 
 .login-section {
@@ -122,12 +151,14 @@ export default {
 }
 
 .login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #007bff;
-  color: white;
+  color: #fff;
   border: none;
-  padding: 12px 24px;
+  padding: 12px;
   border-radius: 25px;
-  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
@@ -142,14 +173,20 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgb(5,172,233);
-  background: linear-gradient(142deg, rgba(5,172,233,1) 0%, rgba(0,33,86,1) 57%);
+  background: rgb(6, 93, 125);
+  background: radial-gradient(circle, rgba(6, 93, 125, 1) 0%, rgba(4, 28, 76, 1) 100%);
   border-radius: 0 15px 15px 0;
 }
 
 .image {
   width: 50%;
   height: auto;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
 }
 
 @media (max-width: 768px) {

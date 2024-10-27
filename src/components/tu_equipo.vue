@@ -1,8 +1,10 @@
 <template>
-  <div class="container mt-5">
+  <div class="container">
     <div class="window">
-      <!-- Encabezado con el logo -->
       <div class="header-section">
+        <a href="/" rel="noopener noreferrer" class="enter-button-container">
+          <span class="material-symbols-outlined enter-button">arrow_back</span>
+        </a>
         <img
           src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png"
           alt="Logo"
@@ -10,175 +12,88 @@
         />
       </div>
 
-      <h4 class="text-center">Estado de tu equipo</h4>
-      <p class="text">
-        A continuación te mostramos el progreso del servicio de tu equipo.
-      </p>
+      <div class="cabeza">
+        <h2 class="text-center">Estado de tu equipo</h2>
+        <p class="text text-center">
+          A continuación te mostramos el progreso del servicio de tu equipo.
+        </p>
 
-      <div class="row">
-        <!-- Lado izquierdo: Buscador -->
-        <div class="col-md-6 buscador-column">
-          <h5>Buscar otro dispositivo</h5>
+        <div class="search-container">
           <input
             type="text"
-            class="form-control"
-            placeholder="Ingresa el ID o nombre del dispositivo"
-            v-model="searchQuery"
+            class="search-input"
+            placeholder="Buscar equipo..."
           />
-          <button class="btn btn-primary mt-2" @click="searchDevice">
-            Buscar
+          <button class="search-button">
+            <span class="material-symbols-outlined">search</span>
           </button>
         </div>
+      </div>
 
-        <!-- Lado derecho: Progreso del servicio -->
-        <div class="col-md-6 progreso-column">
-          <div class="timeline">
-            <div
-              class="timeline-step"
-              v-for="(step, index) in selectedDevice.steps"
-              :key="index"
-            >
-              <!-- Step marker with icon indicating status -->
-              <div class="step-marker">
-                <i
-                  :class="{
-                    'fas fa-check-circle complete-check': currentStep > index,
-                    'fas fa-circle-notch current-check': currentStep === index,
-                    'far fa-circle pending-check': currentStep < index
-                  }"
-                ></i>
-              </div>
-
-              <!-- Step content -->
-              <div class="step-content">
-                <h5 :class="{ 'text-primary': currentStep === index, 'text-muted': currentStep !== index }">
-                  {{ step.title }}
-                </h5>
-                <p v-if="step.description && currentStep === index" class="step-description">
-                  {{ step.description }}
-                </p>
-                <button
-                  class="btn btn-outline-info btn-sm"
-                  @click="openModal(index)"
-                  :disabled="currentStep < index"
-                  :class="{
-                    'text-muted': currentStep < index,
-                    'text-primary': currentStep >= index
-                  }"
-                  data-bs-toggle="modal"
-                  :data-bs-target="'#detailsModal' + index"
-                >
-                  Ver detalles
-                </button>
-              </div>
-
-              <!-- Modal específico para cada paso -->
-              <div
-                class="modal fade"
-                :id="'detailsModal' + index"
-                tabindex="-1"
-                aria-labelledby="detailsModalLabel"
-                aria-hidden="true"
-              >
-                <div class="modal-dialog modal-dialog-centered">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="detailsModalLabel">
-                        Detalles de: {{ step.title }}
-                      </h5>
-                      <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                      ></button>
-                    </div>
-                    <div class="modal-body">
-                      <p>{{ step.modalContent }}</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        Cerrar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Barra de progreso visual -->
-          <div class="progress mt-4">
-            <div
-              class="progress-bar progress-bar-striped progress-bar-animated bg-info"
-              role="progressbar"
-              :style="{ width: progressPercentage + '%' }"
-              aria-valuenow="progressPercentage"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            >
-              {{ progressPercentage }}%
-            </div>
+      <div class="tracking-menu">
+        <div
+          v-for="(step, index) in trackingSteps.slice(-4).reverse()"
+          :key="step.title" 
+          :class="['tracking-step', index === 0 ? 'current' : 'previous']"
+        >
+          <div class="step-label-container">
+            <span class="step-label">Estado {{ index === 0 ? 'Actual' : 'Anterior' }}: {{ step.title }}</span>
+            <a v-if="index === 0" class="enter-button-container" @click="openModal">
+              <span class="material-symbols-outlined menu-button">keyboard_arrow_down</span>
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- Modal para ver detalles del equipo general -->
-      <div
-        class="modal fade"
-        id="detailsModal"
-        tabindex="-1"
-        aria-labelledby="detailsModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
+      <!-- Botón para ver seguimiento completo -->
+      <div class="text-center mt-4">
+        <button class="btn btn-primary" @click="openFullTrackingModal">Ver seguimiento completo</button>
+      </div>
+
+      <!-- Modal para detalles específicos -->
+      <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content bg-dark text-white">
             <div class="modal-header">
-              <h5 class="modal-title" id="detailsModalLabel">
-                Detalles de tu equipo
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <p>Diagnóstico de tu equipo.</p>
-              <p>Diagnóstico: {{ selectedDevice.diagnosis }}</p>
-              <p>Tipo de mantenimiento: {{ selectedDevice.maintenanceType }}</p>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cerrar
+              <h5 class="modal-title" id="modalTitle">Detalles Específicos</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
+                <span aria-hidden="true">&times;</span>
               </button>
             </div>
+            <div class="modal-body">
+              <div v-for="step in trackingSteps" :key="step.title" class="tracking-step mb-4">
+                <h6 class="step-title">{{ step.title }}</h6>
+                <p class="step-details">{{ step.details }}</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Cerrar</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Botones para ver información del equipo y regresar -->
-      <div class="text-center mt-4">
-        <button
-          type="button"
-          class="btn btn-info"
-          data-bs-toggle="modal"
-          data-bs-target="#detailsModal"
-        >
-          Ver información del equipo
-        </button>
-        <button type="button" class="btn btn-secondary" @click="goBack">
-          Regresar
-        </button>
+      <!-- Modal para ver seguimiento completo -->
+      <div class="modal fade" id="fullTrackingModal" tabindex="-1" role="dialog" aria-labelledby="fullTrackingTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+              <h5 class="modal-title" id="fullTrackingTitle">Seguimiento Completo</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeFullTrackingModal">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div v-for="step in trackingSteps" :key="step.title" class="tracking-step mb-4">
+                <h6 class="step-title">{{ step.title }}</h6>
+                <p class="step-details">{{ step.details }}</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeFullTrackingModal">Cerrar</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -188,90 +103,75 @@
 export default {
   data() {
     return {
-      currentStep: 2,
-      searchQuery: '',
-      devices: [
-        {
-          id: '1',
-          name: 'Laptop Dell XPS',
-          diagnosis: 'Problema de conexión de red',
-          maintenanceType: 'Reparación de hardware',
-          steps: [
-            { title: 'Análisis inicial', description: 'El equipo está siendo evaluado por un técnico.', modalContent: 'El técnico está revisando el equipo para diagnosticar el problema.' },
-            { title: 'Búsqueda de piezas', description: 'Estamos buscando las piezas necesarias para la reparación.', modalContent: 'En este paso se buscan y aseguran las piezas necesarias.' },
-            { title: 'Armado', description: 'El equipo está siendo ensamblado.', modalContent: 'Se ensamblan las piezas nuevas en el equipo.' },
-            { title: 'Pruebas finales', description: 'Estamos realizando pruebas.', modalContent: 'Se realizan pruebas para verificar que todo funcione correctamente.' },
-            { title: 'Listo para entrega', description: 'El equipo está listo para entrega.', modalContent: 'El equipo ha pasado todas las pruebas y está listo.' }
-          ]
-        },
-        {
-          id: '2',
-          name: 'Smartphone Samsung Galaxy',
-          diagnosis: 'Pantalla rota',
-          maintenanceType: 'Cambio de pantalla',
-          steps: [
-            { title: 'Análisis inicial', description: 'Se ha detectado una pantalla rota.', modalContent: 'Diagnóstico inicial: Pantalla rota.' },
-            { title: 'Búsqueda de repuesto', description: 'Se está buscando un repuesto de pantalla.', modalContent: 'Buscando una pantalla compatible para reemplazar.' },
-            { title: 'Reemplazo de pantalla', description: 'Pantalla siendo reemplazada.', modalContent: 'El técnico está instalando la nueva pantalla.' },
-            { title: 'Pruebas finales', description: 'Probando la funcionalidad de la nueva pantalla.', modalContent: 'Se están realizando pruebas para asegurarse de que la pantalla funcione correctamente.' },
-            { title: 'Listo para entrega', description: 'El equipo está listo para ser entregado.', modalContent: 'El reemplazo de pantalla ha sido exitoso, el equipo está listo.' }
-          ]
-        }
-      ],
-      selectedDevice: null
+      // Ejemplo de pasos de seguimiento
+      trackingSteps: [
+        { title: 'Enviado', details: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+        { title: 'En Proceso', details: 'Curabitur lobortis, lectus ut posuere laoreet, massa purus facilisis augue.' },
+        { title: 'En Tránsito', details: 'Vivamus quis nunc ac dui pharetra tempor.' },
+        { title: 'Entregado', details: 'Fusce euismod, justo at tincidunt fringilla, nisi mi pharetra urna.' },
+        { title: 'Recibido', details: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.' },
+        { title: 'Confirmado', details: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
+      ]
     };
   },
   methods: {
-    openModal(index) {
-      const modalId = `#detailsModal${index}`;
-      const modalElement = document.querySelector(modalId);
-      const modalInstance = new bootstrap.Modal(modalElement);
-      modalInstance.show();
+    openModal() {
+      $('#detailsModal').modal('show'); // Muestra el modal utilizando jQuery
     },
-    searchDevice() {
-      const device = this.devices.find(
-        (d) =>
-          d.id === this.searchQuery || d.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-      if (device) {
-        this.selectedDevice = device;
-        this.currentStep = 0; // Resetea el progreso para el dispositivo seleccionado
-      } else {
-        alert('Dispositivo no encontrado');
-      }
+    closeModal() {
+      $('#detailsModal').modal('hide'); // Cierra el modal utilizando jQuery
     },
-    goBack() {
-      window.history.back();
+    openFullTrackingModal() {
+      $('#fullTrackingModal').modal('show'); // Muestra el modal de seguimiento completo
+    },
+    closeFullTrackingModal() {
+      $('#fullTrackingModal').modal('hide'); // Cierra el modal de seguimiento completo
     }
-  },
-  computed: {
-    progressPercentage() {
-      return ((this.currentStep + 1) / this.selectedDevice.steps.length) * 100;
-    }
-  },
-  created() {
-    this.selectedDevice = this.devices[0]; // Selecciona el primer equipo por defecto
   }
 };
 </script>
 
+
 <style scoped>
-/* General container styling */
+.tracking-step {
+  margin-bottom: 20px; /* Espacio entre pasos */
+}
+
+.step-title {
+  font-weight: bold; /* Título en negrita */
+}
+
+.step-details {
+  margin-top: 5px; /* Espacio entre el título y los detalles */
+}
+
 .container {
+  padding: 58px;
+  overflow-y: hidden;
+}
+
+.cabeza {
+  margin-left: 20px;
+}
+
+.window {
   background-color: rgba(0, 0, 0, 0.575);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.719);
-  color: #f8f9fa; 
+  color: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
   max-width: 900px;
   margin: auto;
   margin-bottom: 30px;
+  overflow-y: auto;
 }
 
 /* Header section with logo */
 .header-section {
-  text-align: center;
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0px;
 }
 
 .logo {
@@ -279,167 +179,141 @@ export default {
   height: auto;
 }
 
-/* Text and title styling */
-h4 {
+h2 {
   color: #f8f9fa;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .text {
   color: #ced4da;
   font-size: 16px;
   margin-bottom: 20px;
+  text-align: center;
 }
 
-/* Columns layout */
-.buscador-column,
-.progreso-column {
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  color: #ced4da;
+/* Estilos para la barra de búsqueda */
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }
 
-.buscador-column h5,
-.progreso-column h5 {
-  color: #f8f9fa;
+.search-input {
+  width: 250px;
+  padding: 8px 12px;
+  border: 2px solid #444;
+  border-radius: 20px;
+  font-size: 14px;
+  margin-right: 8px;
+  background: #fff;
+  color: #333;
 }
 
-/* Form styling */
-.form-control {
-  background-color: #f8f9fa;
-  color:  #1f2122;
-  border: 1px solid #495057;
-  border-radius: 50px;
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
-.form-control::placeholder {
-  color: #adb5bd;
-}
-
-button {
-  color: #f8f9fa;
-  border-radius: 50px;
-}
-
-/* Timeline styles */
-.timeline {
-  padding-left: 0;
-  list-style: none;
-}
-
-.timeline-step {
+.search-button {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-}
-
-.step-marker {
-  margin-right: 15px;
-}
-
-.complete-check {
-  color: #007bff;
-}
-
-.current-check {
-  color: #53e2ff;
-}
-
-.pending-check {
-  color: #6c757d;
-}
-
-.complete-check, .current-check, .pending-check {
-  font-size: 1.5rem;
-}
-
-.current-check {
-  animation: spin 1.5s linear infinite;
-}
-
-.step-content {
-  flex-grow: 1;
-}
-
-.step-content h5 {
-  font-size: 18px;
-  margin-bottom: 5px;
-}
-
-.step-description {
-  font-size: 14px;
-  color: #ffffff;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-
-/* Progress bar */
-.progress {
-  height: 20px;
-}
-
-.progress-bar {
-  font-size: 14px;
-}
-
-/* Modals */
-.modal-content {
-  background-color: #343a40;
-  color: #f8f9fa;
-}
-
-.modal-header .btn-close {
-  background-color: #495057;
-  border-radius: 50px;
-}
-
-/* Buttons */
-.btn-primary {
+  justify-content: center;
   background-color: #007bff;
+  color: #fff;
   border: none;
-  border-radius: 50px;
+  padding: 12px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.btn-secondary {
-  background-color: #6c757d;
-  border: none;
-  border-radius: 50px;
+.search-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Estilos para el menú de seguimiento */
+.tracking-menu {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tracking-step {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-label-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-label {
+  color: #ced4da;
   margin-left: 5px;
 }
 
-.btn-info {
-  background-color: #17a2b8;
-  border: none;
-  border-radius: 50px;
-  margin-right: 5px;
+.tracking-step.current .step-label {
+  font-size: 40px;
+  opacity: 1;
 }
 
-/* Ensure text is readable */
-body {
-  font-family: 'Arial', sans-serif;
-  line-height: 1.6;
+.tracking-step.previous .step-label {
+  font-size: 30px;
+  opacity: 0.8;
 }
 
-h4, h5 {
-  font-weight: 600;
+.tracking-step.previous + .tracking-step.previous .step-label {
+  font-size: 25px;
+  opacity: 0.5;
 }
 
-/* Media queries for responsive layout */
-@media (max-width: 768px) {
-  .row {
-    flex-direction: column;
-  }
-
-  .col-md-6 {
-    width: 100%;
-    margin-bottom: 20px;
-  }
+.tracking-step.previous + .tracking-step.previous + .tracking-step.previous .step-label {
+  font-size: 18px;
+  opacity: 0.2;
 }
 
+.enter-button-container {
+  display: flex;
+  align-items: center;
+  color: #007bff;
+  text-decoration: none;
+  font-size: 24px;
+}
+
+.enter-button {
+  position: absolute;
+  top: 85px;
+  width: 7vw; 
+  max-width: 50px;
+  height: auto;
+  font-size: 40px; 
+  color: white;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+  
+.enter-button:hover {
+  transform: scale(1.1);
+}
+
+.menu-button {
+  position: absolute;
+  width: 7vw; 
+  max-width: 50px;
+  height: auto;
+  font-size: 40px; 
+  color: white;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+  
+.menu-button:hover {
+  transform: scale(1.1);
+}
 </style>
-

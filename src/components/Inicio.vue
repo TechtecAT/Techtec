@@ -6,16 +6,19 @@
       <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="top-left-image" />
 
       <a href="/login" rel="noopener noreferrer" class="enter-button-container">
-        <img src="https://triviaglobe.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fenter.9bc9986f.png&w=640&q=75" alt="Enter Button" class="enter-button" />
-      </a>
+  <span class="material-symbols-outlined enter-button">login</span>
+</a>
+
 
       <div class="content">
         <h1>Consulta el estado de tu equipo</h1>
         <div class="search-container">
           <input v-model="numeroServicio" type="text" placeholder="Introduce tu número de servicio..." class="search-bar" />
           <div class="button-container">
-            <button @click="buscar" class="search-button">Buscar</button>
-            <button class="no-service-button">No tengo mi número de servicio</button>
+            <button @click="buscar" class="search-button">
+  <span class="material-symbols-outlined">search</span>
+</button>
+
           </div>
         </div>
       </div>
@@ -59,8 +62,6 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: rgb(0,83,123);
-    background: radial-gradient(circle, rgba(0,83,123,1) 0%, rgba(0,33,86,1) 35%);
   }
   
   .window {
@@ -73,7 +74,7 @@ export default {
     padding: 20px;
     box-sizing: border-box;
     border-radius: 15px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.719); 
+    box-shadow: 12px 13px 15px -4px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -82,13 +83,13 @@ export default {
   
   .top-left-image {
     position: absolute;
-    top: 20px;
+    top: 10px;
     left: 20px;
-    width: 10vw; 
-    max-width: 150px;
+    width: 200px; 
     height: auto;
   }
-  
+
+
   .enter-button {
     position: absolute;
     top: 20px;
@@ -96,14 +97,14 @@ export default {
     width: 7vw; 
     max-width: 50px;
     height: auto;
-    background: transparent;
-    filter: invert(100%);
-    transition: filter 0.3s ease, transform 0.3s ease;
-  }
+    font-size: 40px; 
+    color: white;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
   
-  .enter-button:hover {
-    transform: scale(1.1);
-  }
+.enter-button:hover {
+  transform: scale(1.1);
+}
   
   .content {
     text-align: center;
@@ -111,24 +112,24 @@ export default {
   }
   
   .search-container {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  margin-top: 20px;
+  display: flex;
+  align-items: center; /* Alinea verticalmente el input y el botón */
+  gap: 10px; /* Espacio entre el input y el botón */
+}
+
   
-  .search-bar {
-    width: 100%;
-    max-width: 600px;
-    padding: 12px 20px;
-    border: 2px solid #444;
-    border-radius: 25px;
-    font-size: 16px;
-    margin-bottom: 20px;
-    background: #fff;
-    color: #333;
-    transition: border-color 0.3s ease;
-  }
+.search-bar {
+  flex: 1; /* Permite que el input tome el máximo espacio disponible */
+  padding: 12px 20px;
+  border: 2px solid #444;
+  border-radius: 25px;
+  font-size: 16px;
+  margin-bottom: 0; /* Quita el margen inferior */
+  background: #fff;
+  color: #333;
+}
+
   
   .search-bar:focus {
     border-color: #007bff;
@@ -140,29 +141,28 @@ export default {
     gap: 10px;
   }
   
-  .search-button, .no-service-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-  }
+  .search-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+
+
+.search-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
   
-  .search-button:hover, .no-service-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-  }
-  
-  .no-service-button {
-    background-color: #6c757d; 
-  }
-  
-  .no-service-button:hover {
-    background-color: #5a6268;
-  }
+
   
   @media (max-width: 768px) {
     .top-left-image {

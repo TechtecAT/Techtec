@@ -2,12 +2,20 @@ import express from 'express';
 import mysql from 'mysql2';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY;
 
 // Crear la aplicación Express
-
 const app = express();
 app.use(bodyParser.json());
 app.use(cors()); // Habilita CORS
+
+
 
 // Configurar la conexión a la base de datos
 const db = mysql.createConnection({
@@ -43,7 +51,7 @@ app.get('/api/agregados', (req, res) => {
     });
   });
 
-  app.get('/api/clientes2', (req, res) => {
+  app.get('/api/clientes', (req, res) => {
     db.query('SELECT * FROM   CLIENTES', (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json(results);
@@ -86,6 +94,67 @@ app.get('/api/agregados', (req, res) => {
     });
   });
 
+  app.get('/api/trabajadores/:id', (req, res) => {
+    const { id } = req.params;
+  
+    db.query('SELECT * FROM TRABAJADORES WHERE id_trabajador = ?', [id], (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Trabajador no encontrado' });
+      }
+      res.json(results[0]); // Retornar el primer resultado, que será el trabajador
+    });
+  });
+
+
+// Endpoint para obtener el registro
+app.get('/api/registro', (req, res) => {
+  const query = `
+    SELECT 
+      s.id_servicio,
+      CONCAT(c.nombre, ' ', c.apellido_paterno, ' ', c.apellido_materno) AS cliente,
+      c.domicilio,
+      c.email,
+      GROUP_CONCAT(cel.celular SEPARATOR ', ') AS celulares,
+      te.equipo AS tipo_equipo,
+      a.tipo_agregado AS agregado,
+      ts.servicio AS tipo_servicio,
+      e.descripcion_agregado,
+      e.marca,
+      e.serie,
+      e.modelo,
+      e.estado,
+      e.descripcion AS descripcion_equipo,
+      s.observaciones,
+      CONCAT(s.tiempo_entrega, ' ', s.medida_tiempo) AS tiempo_entrega,
+      DATE_FORMAT(s.fecha, '%d-%m-%Y') AS fecha  -- Formato de fecha ajustado
+    FROM 
+      clientes c
+    JOIN 
+      celulares cel ON c.id_cliente = cel.id_cliente
+    JOIN 
+      servicio s ON c.id_cliente = s.id_cliente
+    JOIN 
+      equipo e ON s.id_equipo = e.id_equipo
+    JOIN 
+      tipos_equipo te ON e.id_tipo_equipo = te.id_tipo_equipo
+    JOIN 
+      agregados a ON e.id_agregados = a.id_agregados
+    JOIN 
+      tipos_servicio ts ON s.id_tipo_servicio = ts.id_tipo_servicio
+    GROUP BY 
+      c.id_cliente, s.id_servicio;`;
+
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error('Error al realizar la consulta:', error);
+      return res.status(500).json({ error: 'Error al recuperar los datos' });
+    }
+    res.json(results);
+  });
+});
+
+
 
 // Rutas (endpoints) POST 
 
@@ -126,7 +195,7 @@ app.post('/api/clientes', (req, res) => {
   
   app.post('/api/tipos_servicio', (req, res) => {
     const { servicio, idTipoEquipo } = req.body;
-    db.query('INSERT INTO tipos_servicio (servicio, id_tipo_equipo) VALUES (?, ?)', 
+    db.query('INSERT INTO tipos_servicio (servicio) VALUES (?)', 
     [servicio, idTipoEquipo], 
     (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -169,197 +238,123 @@ app.post('/api/servicio', (req, res) => {
     });
   });
   
+  
+
+
+
   app.post('/submitForm', async (req, res) => {
     const { cliente, celular, equipo, servicio } = req.body;
-
-    // Usar la conexión directamente
+  
     db.beginTransaction((err) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        // Insertar en la tabla de clientes
-        db.query(
-            "INSERT INTO clientes (nombre, apellido_paterno, apellido_materno, domicilio, email) VALUES (?, ?, ?, ?, ?)", 
-            [cliente.nombre, cliente.apellidoPaterno, cliente.apellidoMaterno, cliente.domicilio, cliente.email],
-            (err, resultCliente) => {
-                if (err) {
-                    return db.rollback(() => res.status(500).json({ error: err.message }));
-                }
-                const idCliente = resultCliente.insertId;
-
-                // Insertar cada celular
-                const celularPromises = celular.celulares.map(numeroCelular => {
-                    return new Promise((resolve, reject) => {
-                        db.query(
-                            "INSERT INTO celulares (celular, id_cliente) VALUES (?, ?)", 
-                            [numeroCelular, idCliente],
-                            (err) => {
-                                if (err) reject(err);
-                                else resolve();
-                            }
-                        );
-                    });
-                });
-
-                Promise.all(celularPromises)
-                    .then(() => {
-                        // Insertar en la tabla de equipo
-                        db.query(
-                            "INSERT INTO equipo (marca, serie, modelo, descripcion, estado, descripcion_agregado, id_tipo_equipo, id_agregados) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
-                            [equipo.marca, equipo.serie, equipo.modelo, equipo.descripcion, equipo.estado, equipo.descripcionAgregado, equipo.idTipoEquipo, equipo.idAgregados],
-                            (err, resultEquipo) => {
-                                if (err) {
-                                    return db.rollback(() => res.status(500).json({ error: err.message }));
-                                }
-                                const idEquipo = resultEquipo.insertId;
-
-                                // Insertar en la tabla de servicio
-                                db.query(
-                                    "INSERT INTO servicio (observaciones, tiempo_entrega, medida_tiempo, id_cliente, id_equipo, id_tipo_servicio, id_trabajador) VALUES (?, ?, ?, ?, ?, ?, ?)", 
-                                    [servicio.observaciones, servicio.tiempo_entrega, servicio.medida_tiempo, idCliente, idEquipo, servicio.id_tipo_servicio, servicio.id_trabajador],
-                                    (err) => {
-                                        if (err) {
-                                            return db.rollback(() => res.status(500).json({ error: err.message }));
-                                        }
-                                        db.commit((err) => {
-                                            if (err) {
-                                                return db.rollback(() => res.status(500).json({ error: err.message }));
-                                            }
-                                            res.json({ success: true });
-                                        });
-                                    }
-                                );
-                            }
-                        );
-                    })
-                    .catch(err => {
-                        db.rollback(() => res.status(500).json({ error: err.message }));
-                    });
-            }
-        );
-    });
-});
-
-
-// Endpoints para CRUD
-
-// 1. Obtener todos los datos de clientes con sus equipos, servicios y trabajadores
-app.get('/api/clientes', (req, res) => {
-  const query = `
-      SELECT clientes.id_cliente, 
-             clientes.nombre, 
-             clientes.apellido_paterno, 
-             clientes.apellido_materno, 
-             clientes.domicilio, 
-             clientes.email,
-             celulares.celular,
-             equipo.marca, 
-             equipo.serie, 
-             equipo.modelo, 
-             equipo.descripcion, 
-             equipo.estado, 
-             equipo.descripcion_agregado,
-             tipos_equipo.equipo AS tipo_equipo,
-             agregados.tipo_agregado,
-             servicio.observaciones, 
-             servicio.tiempo_entrega, 
-             servicio.medida_tiempo, 
-             tipos_servicio.servicio AS tipo_servicio,
-            trabajadores.nombre AS trabajador_nombre,
-            CONCAT(trabajadores.apellido_paterno, ' ', trabajadores.apellido_materno) AS trabajador_apellido
-      FROM clientes
-      LEFT JOIN celulares ON clientes.id_cliente = celulares.id_cliente
-      LEFT JOIN servicio ON clientes.id_cliente = servicio.id_cliente
-      LEFT JOIN equipo ON servicio.id_equipo = equipo.id_equipo
-      LEFT JOIN tipos_equipo ON equipo.id_tipo_equipo = tipos_equipo.id_tipo_equipo
-      LEFT JOIN agregados ON equipo.id_agregados = agregados.id_agregados
-      LEFT JOIN tipos_servicio ON servicio.id_tipo_servicio = tipos_servicio.id_tipo_servicio
-      LEFT JOIN trabajadores ON servicio.id_trabajador = trabajadores.id_trabajador
-      ORDER BY clientes.id_cliente;
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) throw err;
-
-    // Agrupar celulares por cliente
-    const clientes = {};
-    
-    results.forEach(row => {
-      const { id_cliente, nombre, apellido_paterno, apellido_materno, domicilio, email, celular, marca, serie, modelo, descripcion, estado, descripcion_agregado, tipo_equipo, tipo_agregado, observaciones, tiempo_entrega, medida_tiempo, tipo_servicio, trabajador_nombre, trabajador_apellido } = row;
-
-      // Si el cliente no está en el objeto, lo inicializamos
-      if (!clientes[id_cliente]) {
-        clientes[id_cliente] = {
-          id_cliente,
-          nombre,
-          apellido_paterno,
-          apellido_materno,
-          domicilio,
-          email,
-          celulares: [],
-          servicios: []
-        };
-      }
-
-      // Agregar el celular si existe
-      if (celular) {
-        clientes[id_cliente].celulares.push(celular);
-      }
-
-      // Agregar el servicio si existe
-      if (observaciones) {
-        clientes[id_cliente].servicios.push({
-          marca,
-          serie,
-          modelo,
-          descripcion,
-          estado,
-          descripcion_agregado,
-          tipo_equipo,
-          tipo_agregado,
-          observaciones,
-          tiempo_entrega,
-          medida_tiempo,
-          tipo_servicio,
-          trabajador: {
-            nombre: trabajador_nombre,
-            apellido: trabajador_apellido
+      if (err) return res.status(500).json({ error: err.message });
+  
+      db.query(
+        "INSERT INTO clientes (nombre, apellido_paterno, apellido_materno, domicilio, email) VALUES (?, ?, ?, ?, ?)",
+        [cliente.nombre, cliente.apellidoPaterno, cliente.apellidoMaterno, cliente.domicilio, cliente.email],
+        (err, resultCliente) => {
+          if (err) {
+            return db.rollback(() => res.status(500).json({ error: err.message }));
           }
-        });
-      }
+          const idCliente = resultCliente.insertId;
+  
+          const celularPromises = celular.celulares.map(numero => {
+            return new Promise((resolve, reject) => {
+              db.query(
+                "INSERT INTO celulares (celular, id_cliente) VALUES (?, ?)",
+                [numero, idCliente],
+                (err) => (err ? reject(err) : resolve())
+              );
+            });
+          });
+  
+          Promise.all(celularPromises)
+            .then(() => {
+              db.query(
+                "INSERT INTO equipo (marca, serie, modelo, descripcion, estado, descripcion_agregado, id_tipo_equipo, id_agregados) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [equipo.marca, equipo.serie, equipo.modelo, equipo.descripcion, equipo.estado, equipo.descripcionAgregado, equipo.idTipoEquipo, equipo.idAgregados],
+                (err, resultEquipo) => {
+                  if (err) {
+                    return db.rollback(() => res.status(500).json({ error: err.message }));
+                  }
+                  const idEquipo = resultEquipo.insertId;
+  
+                  db.query(
+                    "INSERT INTO servicio (observaciones, tiempo_entrega, medida_tiempo, id_cliente, id_equipo, id_tipo_servicio, id_trabajador) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    [servicio.observaciones, servicio.tiempo_entrega, servicio.medida_tiempo, idCliente, idEquipo, servicio.id_tipo_servicio, servicio.id_trabajador],
+                    (err, resultServicio) => {
+                      if (err) {
+                        return db.rollback(() => res.status(500).json({ error: err.message }));
+                      }
+  
+                      db.commit((err) => {
+                        if (err) {
+                          return db.rollback(() => res.status(500).json({ error: err.message }));
+                        }
+                        res.json({ success: true, id_servicio: resultServicio.insertId }); // Devolver id_servicio
+                      });
+                    }
+                  );
+                }
+              );
+            })
+            .catch(err => db.rollback(() => res.status(500).json({ error: err.message })));
+        }
+      );
     });
+  });
+  
 
-    // Convertir el objeto a un array
-    res.json(Object.values(clientes));
+  
+
+  
+// Endpoint de login
+app.post('/api/login', (req, res) => {
+  const { user, password } = req.body;
+
+  if (!user || !password) {
+    return res.status(400).json({ message: 'Usuario y contraseña son requeridos' });
+  }
+
+  db.query('SELECT * FROM trabajadores WHERE user = ?', [user], (err, results) => {
+    if (err) {
+      console.error('Error en la consulta de inicio de sesión:', err);
+      return res.status(500).json({ message: 'Error interno del servidor' });
+    }
+
+    if (results.length === 0) {
+      return res.status(401).json({ message: 'Usuario no encontrado' });
+    }
+
+    const trabajador = results[0];
+
+    bcrypt.compare(password, trabajador.password, (err, match) => {
+      if (err) {
+        console.error('Error al comparar contraseñas:', err);
+        return res.status(500).json({ message: 'Error interno del servidor' });
+      }
+
+      if (!match) {
+        return res.status(401).json({ message: 'Contraseña incorrecta' });
+      }
+
+      // Generar token JWT con el ID del usuario
+      const token = jwt.sign({ userId: trabajador.id }, SECRET_KEY, { expiresIn: '1h' });
+
+      // Responder solo con el token y el ID del trabajador
+      return res.status(200).json({
+        message: 'Inicio de sesión exitoso',
+        token,
+        userId: trabajador.id_trabajador, // Enviar solo el ID del trabajador
+      });
+    });
   });
 });
 
-app.delete('/api/clientes/:id', async (req, res) => {
-  const id = req.params.id;
 
-  try {
-    // Primero, elimina los celulares del cliente
-    await db.promise().query('DELETE FROM celulares WHERE id_cliente = ?', [id]);
 
-    // Luego, obtiene los id_equipo relacionados con los servicios del cliente
-    const [servicios] = await db.promise().query('SELECT id_equipo FROM servicio WHERE id_cliente = ?', [id]);
-    
-    // Elimina los servicios del cliente
-    await db.promise().query('DELETE FROM servicio WHERE id_cliente = ?', [id]);
 
-    // Elimina los equipos del cliente usando la tabla servicio
-    for (const servicio of servicios) {
-      await db.promise().query('DELETE FROM equipo WHERE id_equipo = ?', [servicio.id_equipo]);
-    }
+  
 
-    // Finalmente, elimina al cliente
-    await db.promise().query('DELETE FROM clientes WHERE id_cliente = ?', [id]);
-
-    res.status(200).json({ message: 'Cliente eliminado correctamente.' });
-  } catch (error) {
-    console.error('Error al eliminar el cliente:', error);
-    res.status(500).json({ message: 'Error al eliminar el cliente.' });
-  }
-});
 
 
 

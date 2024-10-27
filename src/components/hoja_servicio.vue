@@ -1,8 +1,10 @@
 <template>
+  <menu-lateral />
   <div class="form-container">
+    
     <form @submit.prevent="submitForm" class="form">
 
-      <h3>Registro de nuevo equipo</h3>
+<h3>Registro de nuevo equipo</h3>
 
       <!-- Apartado 1: Datos del Cliente -->
       <input v-model="cliente.nombre" placeholder="Nombre" type="text" id="nombre" required>
@@ -23,77 +25,88 @@
       <div v-for="(celular, index) in cliente.celulares" :key="index" class="cell-container">
         <input v-model="cliente.celulares[index]" type="text" :id="'celular' + index" placeholder="Celular" required>
         <button type="button" @click="addCelular">
-          <img src="https://cdn-icons-png.flaticon.com/512/4885/4885419.png" class="add-icon">
+          <span class="material-symbols-outlined add-icon">add_circle</span>
         </button>
       </div>
 
       <!-- Apartado 2: Equipo -->
-      <div class="inline-container">
-        <label for="tipo_equipo"></label>
-        <div class="options-container">
-          <select v-model="equipo.idTipoEquipo" id="tipo_equipo" @change="fetchTiposServicio">
-            <option v-for="tipo in tiposEquipo" :key="tipo.id_tipo_equipo" :value="tipo.id_tipo_equipo">{{ tipo.equipo }}</option>
-            <option value="">Tipo de equipo</option>
-          </select>
-          <button type="button" @click="addTipoEquipo">
-            <img src="https://cdn-icons-png.flaticon.com/512/4885/4885419.png" class="add-icon">
-          </button>
-        </div>
 
-        <label for="agregados"></label>
-        <div class="options-container">
-          <select v-model="equipo.idAgregados" id="agregados">
-            <option v-for="agregado in agregados" :key="agregado.id_agregados" :value="agregado.id_agregados">{{ agregado.tipo_agregado }}</option>
-            <option value="">Agregados</option>
-          </select>
-          <button type="button" @click="addAgregado">
-            <img src="https://cdn-icons-png.flaticon.com/512/4885/4885419.png" class="add-icon">
-          </button>
-        </div>
+<div class="inline-container">
+  <label for="tipo_equipo"></label>
+  <div class="options-container">
+    <select v-model="equipo.idTipoEquipo" id="tipo_equipo" @change="fetchTiposServicio">
+      <option v-for="tipo in tiposEquipo" :key="tipo.id_tipo_equipo" :value="tipo.id_tipo_equipo">{{ tipo.equipo }}</option>
+      <option value="">Tipo de equipo</option>
+    </select>
+    <button type="button" @click="addTipoEquipo">
+      <span class="material-symbols-outlined add-icon">add_circle</span>
+    </button>
+  </div>
 
-        <label for="tipo_servicio"></label>
-        <div class="options-container">
-          <select v-model="equipo.idTipoServicio" id="tipo_servicio">
-            <option v-for="tipo in tiposServicio" :key="tipo.id_tipo_servicio" :value="tipo.id_tipo_servicio">{{ tipo.servicio }}</option>
-            <option value="">Tipo de Servicio</option>
-          </select>
-          <button type="button" @click="addTipoServicio">
-            <img src="https://cdn-icons-png.flaticon.com/512/4885/4885419.png" class="add-icon">
-          </button>
-        </div>
+  <label for="agregados"></label>
+      <div class="options-container">
+      <select v-model="equipo.idAgregados" id="agregados">
+        <option v-for="agregado in agregados" :key="agregado.id_agregados" :value="agregado.id_agregados">{{ agregado.tipo_agregado }}</option>
+        <option value="">Agregados</option>
+      </select>
+      <button type="button" @click="addAgregado">
+        <span class="material-symbols-outlined add-icon">add_circle</span>
+      </button>
       </div>
 
-      <label for="descripcion_agregado"></label>
-      <input v-model="equipo.descripcionAgregado" placeholder="Descripción del Agregado" type="text" id="descripcion_agregado" />
-      
-      <div class="inline-container">
-        <label for="marca"></label>
-        <div class="equip-container">
-          <input v-model="equipo.marca" placeholder="Marca" type="text" id="marca" required>
-        </div>
 
-        <label for="serie"></label>
-        <div class="equip-container">
-          <input v-model="equipo.serie" placeholder="Serie" type="text" id="serie" required>
-        </div>
 
-        <label for="modelo"></label>
-        <div class="equip-container">
-          <input v-model="equipo.modelo" placeholder="Modelo" type="text" id="modelo" required>
-        </div>
+  <label for="tipo_servicio"></label>
+  <div class="options-container">
+    <select v-model="equipo.idTipoServicio" id="tipo_servicio">
+      <option v-for="tipo in tiposServicio" :key="tipo.id_tipo_servicio" :value="tipo.id_tipo_servicio">{{ tipo.servicio }}</option>
+      <option value="">Tipo de Servicio</option>
+    </select>
+    <button type="button" @click="addTipoServicio">
+      <span class="material-symbols-outlined add-icon">add_circle</span>
+    </button>
+  </div>
+</div>
 
-        <label>Estado:</label>
-        <div class="radio-group">
-          <input type="radio" id="bueno" value="BUENO" v-model="equipo.estado" class="status-input" />
-          <label for="bueno" class="status-label green"></label>
+<label for="descripcion_agregado"></label>
+<input v-model="equipo.descripcionAgregado" placeholder="Descripción del Agregado" type="text" id="descripcion_agregado" />
 
-          <input type="radio" id="regular" value="REGULAR" v-model="equipo.estado" class="status-input" />
-          <label for="regular" class="status-label yellow"></label>
 
-          <input type="radio" id="malo" value="MALO" v-model="equipo.estado" class="status-input" />
-          <label for="malo" class="status-label red"></label>
-        </div>
+
+
+
+
+
+
+<div class="inline-container">
+      <label for="marca"></label>
+      <div class="equip-container">
+      <input v-model="equipo.marca" placeholder="Marca" type="text" id="marca" required>
+    </div>
+
+      <label for="serie"></label>
+      <div class="equip-container">
+      <input v-model="equipo.serie" placeholder="Serie" type="text" id="serie" required>
       </div>
+
+      <label for="modelo"></label>
+      <div class="equip-container">
+      <input v-model="equipo.modelo" placeholder="Modelo" type="text" id="modelo" required>
+      </div>
+
+      <label>Estado:</label>
+<div class="radio-group">
+  <input type="radio" id="bueno" value="BUENO" v-model="equipo.estado" class="status-input" />
+  <label for="bueno" class="status-label green"></label>
+  
+  <input type="radio" id="regular" value="REGULAR" v-model="equipo.estado" class="status-input" />
+  <label for="regular" class="status-label yellow"></label>
+  
+  <input type="radio" id="malo" value="MALO" v-model="equipo.estado" class="status-input" />
+  <label for="malo" class="status-label red"></label>
+</div>
+
+    </div>
 
       <label for="descripcion_equipo"></label>
       <input v-model="equipo.descripcion" placeholder="Descripción del Equipo" type="text" id="descripcion_equipo" required>
@@ -102,29 +115,25 @@
       <textarea v-model="equipo.observaciones" placeholder="Observaciones:" id="observaciones"></textarea>
 
       <label for="tiempo_entrega"></label>
-      <div class="time-container">
-        <input v-model.number="equipo.tiempoEntrega" placeholder="Tiempo de Entrega" type="number" id="tiempo_entrega" required>
+<div class="time-container">
+  <input v-model.number="equipo.tiempoEntrega" placeholder="Tiempo de Entrega" type="number" id="tiempo_entrega" required>
 
-        <input type="radio" id="dias" value="DIAS" v-model="equipo.medidaTiempo" />
-        <label for="dias" class="option-label">Días</label>
+  <!-- Radios ocultos y labels seleccionables -->
+  <input type="radio" id="dias" value="DIAS" v-model="equipo.medidaTiempo" />
+  <label for="dias" class="option-label">Días</label>
 
-        <input type="radio" id="horas" value="HORAS" v-model="equipo.medidaTiempo" />
-        <label for="horas" class="option-label">Hrs</label>
-      </div>
-      
-      <div>
-        <button type="submit" class="submit-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/157/157977.png" class="submit-icon">
-        </button>
+  <input type="radio" id="horas" value="HORAS" v-model="equipo.medidaTiempo" />
+  <label for="horas" class="option-label">Hrs</label>
+</div>
 
-        <button @click="regresar" class="back-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/8591/8591477.png" class="submit-icon">
-        </button>
 
-        <button type="button" @click="imprimirFormulario" class="print-btn">
-        <img src="https://img.icons8.com/?size=100&id=123&format=png&color=000000" class="print-icon">
+    <div>
+      <button type="submit" class="action-button">
+        <span class="material-symbols-outlined submit-icon">send</span>
       </button>
-      </div>
+
+    </div>
+
     </form>
   </div>
 </template>
@@ -133,8 +142,12 @@
 import router from '@/router';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
+import { jsPDF } from "jspdf";
+import MenuLateral from '@/components/menu.vue';
 export default {
+  components: {
+        MenuLateral, // Registrar el componente
+    },
   data() {
     return {
       cliente: {
@@ -171,137 +184,6 @@ export default {
   },
   methods: {
 
-    
-    validarCampos() {
-  // Expresiones regulares para validación
-  const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/; 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
-  const direccionRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s.,-]+$/; 
-  const celularRegex = /^[0-9]+$/; 
-  const tiempoRegex = /^[0-9]+$/; 
-
-  // Validar campos del cliente
-  if (!this.cliente.nombre || !nombreRegex.test(this.cliente.nombre)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Nombre inválido',
-      text: 'El nombre solo puede contener letras y espacios.',
-    });
-    return false;
-  }
-
-  if (!this.cliente.apellidoPaterno || !nombreRegex.test(this.cliente.apellidoPaterno)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Apellido paterno inválido',
-      text: 'El apellido paterno solo puede contener letras y espacios.',
-    });
-    return false;
-  }
-
-  if (!this.cliente.apellidoMaterno || !nombreRegex.test(this.cliente.apellidoMaterno)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Apellido materno inválido',
-      text: 'El apellido materno solo puede contener letras y espacios.',
-    });
-    return false;
-  }
-
-  if (!this.cliente.domicilio || !direccionRegex.test(this.cliente.domicilio)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Domicilio inválido',
-      text: 'El domicilio solo puede contener letras, números, espacios y los caracteres . , -',
-    });
-    return false;
-  }
-
-  if (!this.cliente.email || !emailRegex.test(this.cliente.email)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Correo electrónico inválido',
-      text: 'Por favor, introduce un correo electrónico válido.',
-    });
-    return false;
-  }
-
-  // Validar celular
- 
-
-
-  // Validar campos del equipo
-  if (!this.equipo.idTipoEquipo) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Tipo de equipo inválido',
-      text: 'Por favor, selecciona un tipo de equipo.',
-    });
-    return false;
-  }
-
-  // Sin restricciones para marca, serie y modelo como solicitaste
-  if (!this.equipo.marca) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Marca inválida',
-      text: 'Por favor, introduce una marca.',
-    });
-    return false;
-  }
-
-  if (!this.equipo.modelo) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Modelo inválido',
-      text: 'Por favor, introduce un modelo.',
-    });
-    return false;
-  }
-
-  if (!this.equipo.estado) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Estado inválido',
-      text: 'Por favor, selecciona un estado.',
-    });
-    return false;
-  }
-
-  if (!this.equipo.descripcion || this.equipo.descripcion.length < 10) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Descripción inválida',
-      text: 'La descripción debe contener al menos 10 caracteres.',
-    });
-    return false;
-  }
-
-  // Validar tiempo de entrega
-  if (!this.equipo.tiempoEntrega || !tiempoRegex.test(this.equipo.tiempoEntrega)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Tiempo de entrega inválido',
-      text: 'El tiempo de entrega debe ser un número entero.',
-    });
-    return false;
-  }
-
-  if (!this.equipo.medidaTiempo || (this.equipo.medidaTiempo !== 'DIAS' && this.equipo.medidaTiempo !== 'HORAS')) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Medida de tiempo inválida',
-      text: 'Por favor, selecciona si el tiempo de entrega es en días u horas.',
-    });
-    return false;
-  }
-
-  // Si todas las validaciones pasaron
-  return true;
-},
-
-
-
     regresar(){
       router.push('/trabajadores');
     },
@@ -311,45 +193,145 @@ export default {
     },
 
     async submitForm() {
-  // Llamar a validarCampos antes de enviar el formulario
-  if (!this.validarCampos()) {
-    return; // Si la validación falla, no se continúa con el envío del formulario
+  // Validaciones
+  const nombreRegex = /^[A-Za-z]+$/;
+  const celularRegex = /^[0-9]{10}$/;
+  const tiempoEntregaRegex = /^[0-9]{1,2}$/;
+
+  // Validar nombre
+  if (!nombreRegex.test(this.cliente.nombre)) {
+    Swal.fire({
+      title: 'Error!',
+      text: 'El nombre solo puede contener letras.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
   }
 
+  // Validar apellido paterno
+  if (!nombreRegex.test(this.cliente.apellidoPaterno)) {
+    Swal.fire({
+      title: 'Error!',
+      text: 'El apellido paterno solo puede contener letras.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  // Validar apellido materno
+  if (!nombreRegex.test(this.cliente.apellidoMaterno)) {
+    Swal.fire({
+      title: 'Error!',
+      text: 'El apellido materno solo puede contener letras.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  // Validar celulares
+  for (const celular of this.cliente.celulares) {
+    if (!celularRegex.test(celular)) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'El celular debe contener solo 10 dígitos.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+      });
+      return;
+    }
+  }
+
+  // Validar tiempo de entrega
+  if (!tiempoEntregaRegex.test(this.equipo.tiempoEntrega)) {
+    Swal.fire({
+      title: 'Error!',
+      text: 'El tiempo de entrega debe ser un número de 1 o 2 dígitos.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  // Crear el objeto con la estructura requerida
   const formData = {
-    cliente: { ...this.cliente },
-    celular: { celulares: this.cliente.celulares },
-    equipo: { ...this.equipo },
+    cliente: {
+      ...this.cliente,
+    },
+    celular: {
+      celulares: this.cliente.celulares,
+    },
+    equipo: {
+      ...this.equipo,
+    },
     servicio: {
       observaciones: this.equipo.observaciones,
       tiempo_entrega: this.equipo.tiempoEntrega,
       medida_tiempo: this.equipo.medidaTiempo,
       id_tipo_servicio: this.equipo.idTipoServicio,
-      id_trabajador: 1
-    }
+      id_trabajador: 1, // ID del jefe o trabajador por defecto
+    },
   };
 
   try {
-    // Intentar enviar los datos del formulario
-    await axios.post('http://localhost:3000/submitForm', formData);
+    // Enviar el JSON al endpoint y capturar la respuesta
+    const response = await axios.post('http://localhost:3000/submitForm', formData);
+    
+    // Mostrar SweetAlert de éxito con el id_servicio
+    if (response.data.success) {
+      const idServicio = response.data.id_servicio; // Capturamos el id_servicio
+      this.$router.push({ name: 'hoja_servicio_print', params: { idServicio } });
+      Swal.fire({
+        title: 'Éxito!',
+        text: `El formulario se ha enviado correctamente. ID Servicio: ${idServicio}`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+      });
+    }
 
-    Swal.fire({
-      title: 'Registro Exitoso',
-      text: 'El equipo ha sido registrado correctamente.',
-      icon: 'success',
-      confirmButtonText: 'Aceptar'
-    }).then(() => {
-      router.push('/trabajadores');
-    });
+    // Limpiar el formulario después de enviar
+    // this.resetForm();
   } catch (error) {
+    // Manejo de errores
     Swal.fire({
-      title: 'Error',
-      text: 'Hubo un problema al registrar el equipo. Intenta nuevamente.',
+      title: 'Error!',
+      text: 'Hubo un problema al enviar el formulario. Intenta nuevamente.',
       icon: 'error',
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
     });
   }
 },
+
+
+resetForm() {
+  // Reinicia los datos del formulario a sus valores iniciales
+  this.cliente = {
+    nombre: '',
+    apellidoPaterno: '',
+    apellidoMaterno: '',
+    domicilio: '',
+    email: '',
+    celulares: [''],
+  };
+  
+  this.equipo = {
+    idTipoEquipo: '',
+    estado: '',
+    idTipoServicio: '',
+    idAgregados: '',
+    descripcionAgregado: '',
+    marca: '',
+    serie: '',
+    modelo: '',
+    descripcion: '',
+    observaciones: '',
+    tiempoEntrega: null,
+    medidaTiempo: '',
+  };
+},
+
 
     async fetchTiposEquipo() {
       const response = await axios.get('http://localhost:3000/api/tipos_equipo');
@@ -365,117 +347,120 @@ export default {
     },
 
     async addTipoEquipo() {
-    const { value: nombreEquipo } = await Swal.fire({
-      title: 'Agregar Nuevo Tipo de Equipo',
+    const { value: nuevoTipo } = await Swal.fire({
+      title: 'Agregar nuevo tipo de equipo',
       input: 'text',
-      inputLabel: 'Nombre del Tipo de Equipo',
-      inputPlaceholder: 'Ingresa el nombre del nuevo tipo de equipo',
+      inputLabel: 'Nombre del nuevo tipo de equipo',
+      inputPlaceholder: 'Ingrese el tipo de equipo',
       showCancelButton: true,
       confirmButtonText: 'Agregar',
       cancelButtonText: 'Cancelar',
       inputValidator: (value) => {
         if (!value) {
-          return '¡El nombre del equipo es obligatorio!';
+          return '¡Por favor ingrese un nombre!';
         }
-      }
+      },
     });
 
-    if (nombreEquipo) {
-      try {
-        await axios.post('http://localhost:3000/api/tipos_equipo', { equipo: nombreEquipo });
-        this.fetchTiposEquipo();  
-        Swal.fire(`Nuevo equipo "${nombreEquipo}" agregado correctamente.`);
-      } catch (error) {
-        Swal.fire('Error', 'Hubo un problema al agregar el equipo.', 'error');
-      }
-    }
-  },
-
-  async addAgregado() {
-    const { value: nombreAgregado } = await Swal.fire({
-      title: 'Agregar Nuevo Agregado',
-      input: 'text',
-      inputLabel: 'Nombre del Agregado',
-      inputPlaceholder: 'Ingresa el nombre del nuevo agregado',
-      showCancelButton: true,
-      confirmButtonText: 'Agregar',
-      cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
-        if (!value) {
-          return '¡El nombre del agregado es obligatorio!';
-        }
-      }
-    });
-
-    if (nombreAgregado) {
-      try {
-        await axios.post('http://localhost:3000/api/agregados', { tipo_agregado: nombreAgregado });
-        this.fetchAgregados(); 
-        Swal.fire(`Nuevo agregado "${nombreAgregado}" agregado correctamente.`);
-      } catch (error) {
-        Swal.fire('Error', 'Hubo un problema al agregar el agregado.', 'error');
-      }
+    if (nuevoTipo) {
+      const response = await axios.post('http://localhost:3000/api/tipos_equipo', { equipo: nuevoTipo });
+      this.equipo.idTipoEquipo = response.data.id_tipo_equipo; // Seleccionar el nuevo tipo
+      this.fetchTiposEquipo(); // Refrescar lista
     }
   },
 
   async addTipoServicio() {
-    const { value: nombreServicio } = await Swal.fire({
-      title: 'Agregar Nuevo Tipo de Servicio',
+    const { value: nuevoServicio } = await Swal.fire({
+      title: 'Agregar nuevo tipo de servicio',
       input: 'text',
-      inputLabel: 'Nombre del Tipo de Servicio',
-      inputPlaceholder: 'Ingresa el nombre del nuevo tipo de servicio',
+      inputLabel: 'Nombre del nuevo tipo de servicio',
+      inputPlaceholder: 'Ingrese el tipo de servicio',
       showCancelButton: true,
       confirmButtonText: 'Agregar',
       cancelButtonText: 'Cancelar',
       inputValidator: (value) => {
         if (!value) {
-          return '¡El nombre del servicio es obligatorio!';
+          return '¡Por favor ingrese un nombre!';
         }
-      }
+      },
     });
 
-    if (nombreServicio) {
-      try {
-        await axios.post('http://localhost:3000/api/tipos_servicio', { servicio: nombreServicio });
-        this.fetchTiposServicio();  
-        Swal.fire(`Nuevo servicio "${nombreServicio}" agregado correctamente.`);
-      } catch (error) {
-        Swal.fire('Error', 'Hubo un problema al agregar el servicio.', 'error');
-      }
+    if (nuevoServicio) {
+      const response = await axios.post('http://localhost:3000/api/tipos_servicio', { servicio: nuevoServicio });
+      this.equipo.idTipoServicio = response.data.id_tipo_servicio; // Seleccionar el nuevo servicio
+
+      this.fetchTiposServicio(); // Refrescar lista
     }
   },
 
-    imprimirFormulario() {
-      window.print();
+  async addAgregado() {
+    const { value: nuevoAgregado } = await Swal.fire({
+      title: 'Agregar nuevo agregado',
+      input: 'text',
+      inputLabel: 'Nombre del nuevo agregado',
+      inputPlaceholder: 'Ingrese el tipo de agregado',
+      showCancelButton: true,
+      confirmButtonText: 'Agregar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return '¡Por favor ingrese un nombre!';
+        }
+      },
+    });
+
+    if (nuevoAgregado) {
+      const response = await axios.post('http://localhost:3000/api/agregados', { tipoAgregado: nuevoAgregado });
+      this.equipo.idAgregados = response.data.id_agregado; // Seleccionar el nuevo agregado
+      this.fetchAgregados(); // Refrescar lista
     }
+  },
+
   }
 };
 </script>
 
 <style scoped>
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 .form-container {
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 800px;
-  margin: 40px auto; 
-  background-color: rgba(0, 0, 0, 0.575);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.719);
+  padding: 40px 20px 20px; 
+  max-width: 750px;
+  margin: 0 auto; 
+  position: relative; 
+  top: 0px;
+  left: 7%;
+  animation: slideIn 0.5s ease forwards;
 }
 
 
 .form {
+  background-color: #292a2b;
+  padding: 40px 20px 20px; 
+  border-radius: 25px;
   display: flex;
   flex-direction: column;
   color: white; 
+  margin-top: 0; 
+  box-shadow: 14px 5px 20px 0px rgba(0,0,0,0.4);
 }
 
-h2 {
-  color: white;
-  margin-bottom: 16px;
-}
+
+
 
 label {
-  margin-top: 10px;
+  margin-top: 5px;
   font-weight: bold;
 }
 
@@ -485,7 +470,7 @@ input[type="number"],
 textarea,
 select {
   margin-top: 5px;
-  margin-bottom: 15px;
+  margin-bottom: 15px; 
   padding: 8px;
   border: none;
   border-bottom: 2px solid #ccc;
@@ -499,7 +484,7 @@ select {
 input:focus,
 textarea:focus,
 select:focus {
-  border-bottom-color: #00FFFF;
+  border-bottom-color: #065d7d; 
 }
 
 textarea {
@@ -521,13 +506,13 @@ textarea {
 }
 
 .options-container select {
-  color: white; 
-  padding: 5px; 
+  color: white; /* Color del texto */
+  padding: 5px; /* Espaciado interno */
 }
 
 .options-container select option {
-  background-color: rgba(0, 0, 0, 0.938); 
-  color: white;
+  background-color: rgba(0, 0, 0, 0.938); /* Fondo de las opciones */
+  color: white; /* Color del texto */
 }
 
 .equip-container{
@@ -549,6 +534,9 @@ button {
   transition: transform 0.3s ease;
 }
 
+
+
+
 button:hover {
   transform: scale(1.1);
 }
@@ -567,8 +555,8 @@ button:hover {
 
 .inline-container .cell-container,
 .inline-container .radio-group {
-  margin-right: 15px; 
-  flex: 1;
+  margin-right: 15px; /* Añadir espaciado entre elementos */
+  flex: 1; /* Para que se distribuyan de manera uniforme */
 }
 
 .radio-group {
@@ -578,7 +566,7 @@ button:hover {
 }
 
 .status-input {
-  display: none; 
+  display: none; /* Ocultar los inputs */
 }
 
 .status-label {
@@ -588,7 +576,7 @@ button:hover {
   display: inline-block;
   margin-right: 10px;
   margin-left: 10px;
-  cursor: pointer;
+  cursor: pointer; /* Añadir cursor para que parezca clickeable */
 }
 
 /* Círculo de color */
@@ -607,8 +595,8 @@ button:hover {
 /* Cambiar color a blanco al seleccionar */
 .status-input:checked + .status-label {
  
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); 
-  transition: box-shadow 0.3s ease; 
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* Efecto de brillo */
+  transition: box-shadow 0.3s ease; /* Transición suave para el efecto de brillo */
 }
 
 
@@ -635,60 +623,28 @@ input[type="radio"]:checked + .option-label {
   font-weight: bold;
   color: rgb(0, 183, 255);
 }
-.submit-btn {
-  background-color: #28a745;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 20px;
-  width: 70px;
-  height: 60px;
+
+
+
+
+.action-button {
+  margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.back-btn {
-  background-color: #c71c1c;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 20px;
-  width: 70px;
-  height: 60px;
+.action-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
-.print-btn {
-  background-color: #1adecd;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 20px;
-  width: 70px;
-  height: 60px;
-}
-
-.submit-icon{
-  width: 50px;
-  height: 50px;
-}
-
-.submit-btn:hover {
-  background-color: #218838;
-}
-
-.submit-icon:hover {
-  filter: invert(100%);
-}
-
-.print-icon{
-  width: 50px;
-  height: 50px;
-}
-
-.print-btn:hover {
-  background-color: #1c4fc7;
-}
-
-.print-icon:hover {
-  filter: invert(100%);
-}
 
 </style>

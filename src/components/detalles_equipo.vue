@@ -1,5 +1,8 @@
 <template>
+  <menu-lateral />
   <div class="details-container">
+
+    <div class="container">
     <h1>Detalles del Equipo</h1>
     <div v-if="equipo" class="details-content">
       <!-- Carrusel de fotos -->
@@ -100,12 +103,17 @@
       </div>
     </div>
 
-    <button @click="goBack" class="back-button">Volver</button>
+   
   </div>
+</div>
 </template>
 
 <script>
+import MenuLateral from '@/components/menu.vue';
 export default {
+  components: {
+        MenuLateral, // Registrar el componente
+    },
   data() {
     return {
       equipo: null,
@@ -171,14 +179,35 @@ export default {
 
 
 <style scoped>
-.details-container {
-  padding: 30px;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.container{
+  margin-top: 10px;
   background-color: #1a1a1a;
-  color: #f1f1f1;
-  border-radius: 10px;
-  max-width: 800px;
-  margin: 20px auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  color: white;
+  padding: 40px 20px 20px; 
+  max-width: 750px;
+  margin: 0 auto; 
+  border-radius: 15px;
+  box-shadow: 18px 10px 15px -3px rgba(0,0,0,0.4);
+}
+.details-container {
+  padding: 40px 20px 20px; 
+  max-width: 750px;
+  margin: 0 auto; 
+  position: relative; 
+  top: 0px;
+  left: 7%;
+  animation: slideIn 0.5s ease forwards;
 }
 
 .details-container h1,
@@ -195,6 +224,7 @@ export default {
 
 .carousel-inner img {
   border-radius: 5px;
+  
 }
 
 .carousel-control-prev,
