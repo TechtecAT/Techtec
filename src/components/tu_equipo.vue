@@ -1,96 +1,86 @@
 <template>
   <div class="container">
     <div class="window">
-      <div class="header-section">
-        <a href="/" rel="noopener noreferrer" class="enter-button-container">
-          <span class="material-symbols-outlined enter-button">arrow_back</span>
-        </a>
-        <img
-          src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png"
-          alt="Logo"
-          class="logo img-fluid mb-4"
-        />
-      </div>
+      <img src="https://i.postimg.cc/rpZKd7mT/Dise-o-sin-t-tulo-3.png" alt="Logo" class="top-left-image" />
 
-      <div class="cabeza">
-        <h2 class="text-center">Estado de tu equipo</h2>
-        <p class="text text-center">
-          A continuación te mostramos el progreso del servicio de tu equipo.
-        </p>
+      <a href="/" rel="noopener noreferrer" class="enter-button-container">
+        <span class="material-symbols-outlined enter-button">east</span>
+      </a>
 
-        <div class="search-container">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Buscar equipo..."
-          />
-          <button class="search-button">
-            <span class="material-symbols-outlined">search</span>
-          </button>
+      <div class="content-wrapper">
+        <!-- Contenido del lado izquierdo -->
+        <div class="cabeza">
+          <h2>Estado de tu equipo</h2>
+          <p class="text">
+            A continuación te mostramos el progreso del servicio de tu equipo.
+          </p>
+
+          <div class="search-container">
+            <input type="text" class="search-input" placeholder="Buscar otro equipo..." />
+            <button class="search-button">
+              <span class="material-symbols-outlined">search</span>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="tracking-menu">
-        <div
-          v-for="(step, index) in trackingSteps.slice(-4).reverse()"
-          :key="step.title" 
-          :class="['tracking-step', index === 0 ? 'current' : 'previous']"
-        >
-          <div class="step-label-container">
-            <span class="step-label">Estado {{ index === 0 ? 'Actual' : 'Anterior' }}: {{ step.title }}</span>
-            <a v-if="index === 0" class="enter-button-container" @click="openModal">
-              <span class="material-symbols-outlined menu-button">keyboard_arrow_down</span>
-            </a>
+        <!-- Contenido del lado derecho -->
+        <div class="tracking-menu">
+          <!-- NUEVO: Tiempo de entrega estimado -->
+          <div class="estimated-time">
+            <span class="estimated-label">Tiempo de entrega estimado:</span> 
+            <span class="estimated-value">{{ estimatedTime }}</span>
+          </div>
+
+          <div
+            v-for="(step, index) in trackingSteps.slice(-4).reverse()"
+            :key="step.title"
+            :class="['tracking-step', index === 0 ? 'current' : 'previous']"
+          >
+            <div class="step-indicator"></div>
+            <div class="step-label-container">
+              <span class="step-label">
+                Estado {{ index === 0 ? 'Actual' : 'Anterior' }}: {{ step.title }}
+              </span>
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <button class="btn btn-primary" @click="openFullTrackingModal">
+              Ver seguimiento completo
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Botón para ver seguimiento completo -->
-      <div class="text-center mt-4">
-        <button class="btn btn-primary" @click="openFullTrackingModal">Ver seguimiento completo</button>
-      </div>
-
-      <!-- Modal para detalles específicos -->
-      <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+      <div class="modal fade" id="fullTrackingModal" tabindex="-1" role="dialog" aria-labelledby="fullTrackingModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content bg-dark text-white">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalTitle">Detalles Específicos</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div v-for="step in trackingSteps" :key="step.title" class="tracking-step mb-4">
-                <h6 class="step-title">{{ step.title }}</h6>
-                <p class="step-details">{{ step.details }}</p>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Cerrar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal para ver seguimiento completo -->
-      <div class="modal fade" id="fullTrackingModal" tabindex="-1" role="dialog" aria-labelledby="fullTrackingTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content bg-dark text-white">
-            <div class="modal-header">
-              <h5 class="modal-title" id="fullTrackingTitle">Seguimiento Completo</h5>
+              <h5 class="modal-title" id="fullTrackingModalLabel">Seguimiento Completo</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeFullTrackingModal">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class="modal-body">
-              <div v-for="step in trackingSteps" :key="step.title" class="tracking-step mb-4">
-                <h6 class="step-title">{{ step.title }}</h6>
-                <p class="step-details">{{ step.details }}</p>
-              </div>
+            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+              <table class="table table-dark table-striped">
+                <thead>
+                  <tr>
+                    <th>Punto de seguimiento</th>
+                    <th>Costo Estimado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="step in trackingSteps" :key="step.title">
+                    <td>
+                      <strong>{{ step.title }}</strong>
+                      <p><small>{{ step.details }}</small></p>
+                    </td>
+                    <td>{{ step.estimatedCost }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeFullTrackingModal">Cerrar</button>
+              <button type="button" class="btn btn-secondary" @click="closeFullTrackingModal">Cerrar</button>
             </div>
           </div>
         </div>
@@ -103,39 +93,53 @@
 export default {
   data() {
     return {
-      // Ejemplo de pasos de seguimiento
+      estimatedTime: "2 DÍAS", // Cambia este valor según el tiempo estimado
       trackingSteps: [
-        { title: 'Enviado', details: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-        { title: 'En Proceso', details: 'Curabitur lobortis, lectus ut posuere laoreet, massa purus facilisis augue.' },
-        { title: 'En Tránsito', details: 'Vivamus quis nunc ac dui pharetra tempor.' },
-        { title: 'Entregado', details: 'Fusce euismod, justo at tincidunt fringilla, nisi mi pharetra urna.' },
-        { title: 'Recibido', details: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.' },
-        { title: 'Confirmado', details: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
-      ]
+        { title: 'Enviado', details: 'El paquete ha sido enviado.', estimatedCost: '$10.00' },
+        { title: 'En Proceso', details: 'El paquete está en proceso de ser preparado.', estimatedCost: '$5.00' },
+        { title: 'En Tránsito', details: 'El paquete está en camino a su destino.', estimatedCost: '$15.00' },
+        { title: 'Entregado', details: 'El paquete ha sido entregado.', estimatedCost: '$0.00' },
+        { title: 'Recibido', details: 'El paquete ha sido recibido por el cliente.', estimatedCost: '$0.00' },
+        { title: 'Confirmado', details: 'El envío ha sido confirmado como recibido.', estimatedCost: '$0.00' },
+      ],
     };
   },
   methods: {
-    openModal() {
-      $('#detailsModal').modal('show'); // Muestra el modal utilizando jQuery
-    },
-    closeModal() {
-      $('#detailsModal').modal('hide'); // Cierra el modal utilizando jQuery
-    },
     openFullTrackingModal() {
-      $('#fullTrackingModal').modal('show'); // Muestra el modal de seguimiento completo
+      $('#fullTrackingModal').modal('show');
     },
     closeFullTrackingModal() {
-      $('#fullTrackingModal').modal('hide'); // Cierra el modal de seguimiento completo
-    }
-  }
+      $('#fullTrackingModal').modal('hide');
+    },
+  },
 };
 </script>
 
-
 <style scoped>
-.tracking-step {
-  margin-bottom: 20px; /* Espacio entre pasos */
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
+
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 .step-title {
   font-weight: bold; /* Título en negrita */
@@ -145,25 +149,45 @@ export default {
   margin-top: 5px; /* Espacio entre el título y los detalles */
 }
 
+.content-wrapper {
+  display: flex;               
+  justify-content: space-between; 
+  width: 100%;                  
+  margin-top: 20px;             
+}
+
 .container {
-  padding: 58px;
-  overflow-y: hidden;
-}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .window {
+    background-color: rgba(0, 0, 0, 0.575);
+    width: 90vw;
+    max-width: 1500px;
+    height: 80vh;
+    max-height: 1200px;
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 15px;
+    box-shadow: 12px 13px 15px -4px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
-.cabeza {
-  margin-left: 20px;
-}
 
-.window {
-  background-color: rgba(0, 0, 0, 0.575);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.719);
-  color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 900px;
-  margin: auto;
-  margin-bottom: 30px;
-  overflow-y: auto;
+  .cabeza {
+  width: 45%;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  animation: slideIn 0.5s ease forwards;
 }
 
 /* Header section with logo */
@@ -236,17 +260,28 @@ h2 {
 
 /* Estilos para el menú de seguimiento */
 .tracking-menu {
-  margin-top: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 40px;
+  margin-right: 20px;
+  width: 50%;
+  padding: 25px;
+  background-color: #292a2b;
+  border-radius: 10px;
+  box-shadow: 21px 17px 22px -4px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease;
+  animation: slideIn 0.5s ease forwards;
+}
+
+.tracking-menu:hover{
+  transform: scale(1.05);
 }
 
 .tracking-step {
-  padding: 10px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .step-label-container {
@@ -255,23 +290,65 @@ h2 {
   justify-content: center;
 }
 
+.step-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: gray;
+  margin-right: 10px;
+  position: relative;
+}
+.current .step-indicator {
+  background-color: transparent;
+  border: 4px solid #007bff;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  width: 16px;
+  height: 16px;
+}
+
+.step-label-container {
+  display: flex;
+  align-items: center;
+}
+
+
 .step-label {
   color: #ced4da;
-  margin-left: 5px;
+  font-size: 18px;
+}
+
+
+
+.tracking-step.previous .step-indicator {
+  background-color: gray;
+  opacity: 0.8;
+}
+
+.tracking-step.previous + .tracking-step.previous .step-indicator {
+  opacity: 0.5;
+  width: 10px;
+  height: 10px;
+}
+
+.tracking-step.previous + .tracking-step.previous + .tracking-step.previous .step-indicator {
+  opacity: 0.2;
+  width: 6px;
+  height: 6px;
 }
 
 .tracking-step.current .step-label {
-  font-size: 40px;
+  font-size: 30px;
   opacity: 1;
 }
 
 .tracking-step.previous .step-label {
-  font-size: 30px;
+  font-size: 25px;
   opacity: 0.8;
 }
 
 .tracking-step.previous + .tracking-step.previous .step-label {
-  font-size: 25px;
+  font-size: 20px;
   opacity: 0.5;
 }
 
@@ -283,20 +360,30 @@ h2 {
 .enter-button-container {
   display: flex;
   align-items: center;
-  color: #007bff;
+  color: #ffffff;
   text-decoration: none;
   font-size: 24px;
 }
 
-.enter-button {
-  position: absolute;
-  top: 85px;
-  width: 7vw; 
-  max-width: 50px;
-  height: auto;
-  font-size: 40px; 
-  color: white;
-  transition: transform 0.3s ease, filter 0.3s ease;
+.top-left-image {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    width: 200px; 
+    height: auto;
+  }
+
+
+  .enter-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 7vw; 
+    max-width: 50px;
+    height: auto;
+    font-size: 40px; 
+    color: white;
+    transition: transform 0.3s ease, filter 0.3s ease;
 }
   
 .enter-button:hover {
@@ -316,4 +403,52 @@ h2 {
 .menu-button:hover {
   transform: scale(1.1);
 }
+
+
+
+.estimated-time {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  background-color: #343a40;
+  color: #f8f9fa;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.estimated-label {
+  margin-right: 10px;
+}
+
+.estimated-value {
+  color: #41BC91;
+}
+
+.modal-content {
+  border: none; /* Eliminar el borde del modal */
+}
+
+.table th,
+.table td {
+  vertical-align: middle; /* Centrar verticalmente el texto en las celdas */
+}
+
+.modal-body {
+  max-height: 400px; /* Establecer altura máxima para el contenido del modal */
+  overflow-y: auto; /* Agregar desplazamiento vertical */
+}
+
+.table-dark {
+  background-color: #343a40; /* Ajustar el color de fondo de la tabla */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #292b2c; /* Color de filas alternas */
+}
+
+
+
 </style>

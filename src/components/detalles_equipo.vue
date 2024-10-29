@@ -5,37 +5,7 @@
     <div class="container">
     <h1>Detalles del Equipo</h1>
     <div v-if="equipo" class="details-content">
-      <!-- Carrusel de fotos -->
-      <div id="carouselPhotos" class="carousel slide">
-        <div class="carousel-inner">
-          <div
-            v-for="(photo, index) in equipo.fotos"
-            :key="index"
-            class="carousel-item"
-            :class="{ active: index === 0 }"
-          >
-            <img :src="photo" class="d-block w-100" alt="Imagen del equipo" />
-          </div>
-        </div>
-        <button
-          class="carousel-control-prev"
-          type="button"
-          data-bs-target="#carouselPhotos"
-          data-bs-slide="prev"
-        >
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button
-          class="carousel-control-next"
-          type="button"
-          data-bs-target="#carouselPhotos"
-          data-bs-slide="next"
-        >
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
+
 
       <!-- Detalles del equipo -->
       <div class="detail-list">
@@ -71,41 +41,14 @@
         <textarea v-model="descripcionProblema" disabled rows="3"></textarea>
       </div>
       
-      <!-- Sección de servicio -->
-      <div class="maintenance-section">
-        <h2>Servicio</h2>
-        <ul>
-          <li 
-            v-for="(paso, index) in mantenimientoPasos" 
-            :key="index"
-            @mouseover="mostrarDetalle(paso)" 
-            @mouseleave="ocultarDetalle"
-            style="position: relative;"
-          >
-            <input 
-              type="checkbox" 
-              v-model="paso.completado" 
-              :disabled="!puedeCompletarPaso(index)" 
-            />
-            <span :class="{ completed: paso.completado }">{{ paso.descripcion }}</span>
-
-            <!-- Ventana emergente (tooltip) -->
-            <div 
-              v-if="pasoMostrado === paso"
-              class="tooltip"
-              style="position: absolute; top: 20px; left: 150px; background-color: #f0f0f0; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"
-            >
-              {{ paso.detalle }}
-            </div>
-          </li>
-        </ul>
+      
         <button @click="subirInforme" class="submit-button">Subir Informe</button>
       </div>
     </div>
 
    
   </div>
-</div>
+
 </template>
 
 <script>
@@ -201,7 +144,7 @@ export default {
   box-shadow: 18px 10px 15px -3px rgba(0,0,0,0.4);
 }
 .details-container {
-  padding: 40px 20px 20px; 
+  padding: 40px 20px 100px; 
   max-width: 750px;
   margin: 0 auto; 
   position: relative; 

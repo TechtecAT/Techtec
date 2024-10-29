@@ -133,10 +133,10 @@
           <tbody>
             <tr>
               <td><strong>TIPO DE SERVICIO:</strong> {{ formData.tipo_servicio }}</td>
-            </tr>
-            <tr>
               <td><strong>TIEMPO DE ENTREGA ESTIMADO:</strong> {{ formData.tiempo_entrega }}</td>
+              <td><strong>COSTO ESTIMADO:</strong> ${{ formData.costo }}</td>
             </tr>
+
           </tbody>
         </table>
   
@@ -320,7 +320,7 @@
 
   .politicas {
   text-align: left; /* Justificar a la izquierda */
-  margin-top: 100px;
+  margin-top: 200px;
 }
 
 .politicas h2{

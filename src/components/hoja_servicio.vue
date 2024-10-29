@@ -1,10 +1,8 @@
 <template>
   <menu-lateral />
   <div class="form-container">
-    
     <form @submit.prevent="submitForm" class="form">
-
-<h3>Registro de nuevo equipo</h3>
+      <h3>Registro de nuevo equipo</h3>
 
       <!-- Apartado 1: Datos del Cliente -->
       <input v-model="cliente.nombre" placeholder="Nombre" type="text" id="nombre" required>
@@ -30,83 +28,72 @@
       </div>
 
       <!-- Apartado 2: Equipo -->
+      <div class="inline-container">
+        <label for="tipo_equipo"></label>
+        <div class="options-container">
+          <select v-model="equipo.idTipoEquipo" id="tipo_equipo" @change="fetchTiposServicio">
+            <option v-for="tipo in tiposEquipo" :key="tipo.id_tipo_equipo" :value="tipo.id_tipo_equipo">{{ tipo.equipo }}</option>
+            <option value="">Tipo de equipo</option>
+          </select>
+          <button type="button" @click="addTipoEquipo">
+            <span class="material-symbols-outlined add-icon">add_circle</span>
+          </button>
+        </div>
 
-<div class="inline-container">
-  <label for="tipo_equipo"></label>
-  <div class="options-container">
-    <select v-model="equipo.idTipoEquipo" id="tipo_equipo" @change="fetchTiposServicio">
-      <option v-for="tipo in tiposEquipo" :key="tipo.id_tipo_equipo" :value="tipo.id_tipo_equipo">{{ tipo.equipo }}</option>
-      <option value="">Tipo de equipo</option>
-    </select>
-    <button type="button" @click="addTipoEquipo">
-      <span class="material-symbols-outlined add-icon">add_circle</span>
-    </button>
-  </div>
+        <label for="agregados"></label>
+        <div class="options-container">
+          <select v-model="equipo.idAgregados" id="agregados">
+            <option v-for="agregado in agregados" :key="agregado.id_agregados" :value="agregado.id_agregados">{{ agregado.tipo_agregado }}</option>
+            <option value="">Agregados</option>
+          </select>
+          <button type="button" @click="addAgregado">
+            <span class="material-symbols-outlined add-icon">add_circle</span>
+          </button>
+        </div>
 
-  <label for="agregados"></label>
-      <div class="options-container">
-      <select v-model="equipo.idAgregados" id="agregados">
-        <option v-for="agregado in agregados" :key="agregado.id_agregados" :value="agregado.id_agregados">{{ agregado.tipo_agregado }}</option>
-        <option value="">Agregados</option>
-      </select>
-      <button type="button" @click="addAgregado">
-        <span class="material-symbols-outlined add-icon">add_circle</span>
-      </button>
+        <label for="tipo_servicio"></label>
+        <div class="options-container">
+          <select v-model="equipo.idTipoServicio" id="tipo_servicio">
+            <option v-for="tipo in tiposServicio" :key="tipo.id_tipo_servicio" :value="tipo.id_tipo_servicio">{{ tipo.servicio }}</option>
+            <option value="">Tipo de Servicio</option>
+          </select>
+          <button type="button" @click="addTipoServicio">
+            <span class="material-symbols-outlined add-icon">add_circle</span>
+          </button>
+        </div>
       </div>
 
+      <label for="descripcion_agregado"></label>
+      <input v-model="equipo.descripcionAgregado" placeholder="Descripción del Agregado" type="text" id="descripcion_agregado" />
 
+      <div class="inline-container">
+        <label for="marca"></label>
+        <div class="equip-container">
+          <input v-model="equipo.marca" placeholder="Marca" type="text" id="marca" required>
+        </div>
 
-  <label for="tipo_servicio"></label>
-  <div class="options-container">
-    <select v-model="equipo.idTipoServicio" id="tipo_servicio">
-      <option v-for="tipo in tiposServicio" :key="tipo.id_tipo_servicio" :value="tipo.id_tipo_servicio">{{ tipo.servicio }}</option>
-      <option value="">Tipo de Servicio</option>
-    </select>
-    <button type="button" @click="addTipoServicio">
-      <span class="material-symbols-outlined add-icon">add_circle</span>
-    </button>
-  </div>
-</div>
+        <label for="serie"></label>
+        <div class="equip-container">
+          <input v-model="equipo.serie" placeholder="Serie" type="text" id="serie" required>
+        </div>
 
-<label for="descripcion_agregado"></label>
-<input v-model="equipo.descripcionAgregado" placeholder="Descripción del Agregado" type="text" id="descripcion_agregado" />
+        <label for="modelo"></label>
+        <div class="equip-container">
+          <input v-model="equipo.modelo" placeholder="Modelo" type="text" id="modelo" required>
+        </div>
 
+        <label>Estado:</label>
+        <div class="radio-group">
+          <input type="radio" id="bueno" value="BUENO" v-model="equipo.estado" class="status-input" />
+          <label for="bueno" class="status-label green"></label>
 
+          <input type="radio" id="regular" value="REGULAR" v-model="equipo.estado" class="status-input" />
+          <label for="regular" class="status-label yellow"></label>
 
-
-
-
-
-
-<div class="inline-container">
-      <label for="marca"></label>
-      <div class="equip-container">
-      <input v-model="equipo.marca" placeholder="Marca" type="text" id="marca" required>
-    </div>
-
-      <label for="serie"></label>
-      <div class="equip-container">
-      <input v-model="equipo.serie" placeholder="Serie" type="text" id="serie" required>
+          <input type="radio" id="malo" value="MALO" v-model="equipo.estado" class="status-input" />
+          <label for="malo" class="status-label red"></label>
+        </div>
       </div>
-
-      <label for="modelo"></label>
-      <div class="equip-container">
-      <input v-model="equipo.modelo" placeholder="Modelo" type="text" id="modelo" required>
-      </div>
-
-      <label>Estado:</label>
-<div class="radio-group">
-  <input type="radio" id="bueno" value="BUENO" v-model="equipo.estado" class="status-input" />
-  <label for="bueno" class="status-label green"></label>
-  
-  <input type="radio" id="regular" value="REGULAR" v-model="equipo.estado" class="status-input" />
-  <label for="regular" class="status-label yellow"></label>
-  
-  <input type="radio" id="malo" value="MALO" v-model="equipo.estado" class="status-input" />
-  <label for="malo" class="status-label red"></label>
-</div>
-
-    </div>
 
       <label for="descripcion_equipo"></label>
       <input v-model="equipo.descripcion" placeholder="Descripción del Equipo" type="text" id="descripcion_equipo" required>
@@ -115,25 +102,32 @@
       <textarea v-model="equipo.observaciones" placeholder="Observaciones:" id="observaciones"></textarea>
 
       <label for="tiempo_entrega"></label>
-<div class="time-container">
-  <input v-model.number="equipo.tiempoEntrega" placeholder="Tiempo de Entrega" type="number" id="tiempo_entrega" required>
+      <div class="time-container">
+        <div class="options-container">
+        <select v-model="equipo.prioridad" id="prioridad" class="urgencia" required>
+          <option value="No urgente">No urgente</option>
+  <option value="Medianamente urgente">Medianamente urgente</option>
+  <option value="Urgente">Urgente</option>
 
-  <!-- Radios ocultos y labels seleccionables -->
-  <input type="radio" id="dias" value="DIAS" v-model="equipo.medidaTiempo" />
-  <label for="dias" class="option-label">Días</label>
+        </select>
+      </div>
+        <input v-model.number="equipo.costo" placeholder="Costo" type="number" id="costo" required>
+        <input v-model.number="equipo.tiempoEntrega" placeholder="Tiempo de Entrega" type="number" id="tiempo_entrega" required>
 
-  <input type="radio" id="horas" value="HORAS" v-model="equipo.medidaTiempo" />
-  <label for="horas" class="option-label">Hrs</label>
-</div>
+        <!-- Menú desplegable para la prioridad -->
+        
+        <input type="radio" id="dias" value="DIAS" v-model="equipo.medidaTiempo" />
+        <label for="dias" class="option-label">Días</label>
 
+        <input type="radio" id="horas" value="HORAS" v-model="equipo.medidaTiempo" />
+        <label for="horas" class="option-label">Hrs</label>
+      </div>
 
-    <div>
-      <button type="submit" class="action-button">
-        <span class="material-symbols-outlined submit-icon">send</span>
-      </button>
-
-    </div>
-
+      <div>
+        <button type="submit" class="action-button">
+          <span class="material-symbols-outlined submit-icon">save</span>
+        </button>
+      </div>
     </form>
   </div>
 </template>
@@ -144,10 +138,11 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { jsPDF } from "jspdf";
 import MenuLateral from '@/components/menu.vue';
+
 export default {
   components: {
-        MenuLateral, // Registrar el componente
-    },
+    MenuLateral, // Registrar el componente
+  },
   data() {
     return {
       cliente: {
@@ -170,7 +165,9 @@ export default {
         descripcion: '',
         observaciones: '',
         tiempoEntrega: null,
-        medidaTiempo: ''
+        medidaTiempo: '',
+        costo: null,
+        prioridad: "No urgente",
       },
       tiposEquipo: [],
       tiposServicio: [],
@@ -183,8 +180,7 @@ export default {
     this.fetchAgregados();
   },
   methods: {
-
-    regresar(){
+    regresar() {
       router.push('/trabajadores');
     },
 
@@ -193,145 +189,159 @@ export default {
     },
 
     async submitForm() {
-  // Validaciones
-  const nombreRegex = /^[A-Za-z]+$/;
-  const celularRegex = /^[0-9]{10}$/;
-  const tiempoEntregaRegex = /^[0-9]{1,2}$/;
+      // Validaciones
+      const nombreRegex = /^[A-Za-z]+$/;
+      const celularRegex = /^[0-9]{10}$/;
+      const tiempoEntregaRegex = /^[0-9]{1,2}$/;
 
-  // Validar nombre
-  if (!nombreRegex.test(this.cliente.nombre)) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'El nombre solo puede contener letras.',
-      icon: 'error',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
+      // Validar nombre
+      if (!nombreRegex.test(this.cliente.nombre)) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'El nombre solo puede contener letras.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+        });
+        return;
+      }
 
-  // Validar apellido paterno
-  if (!nombreRegex.test(this.cliente.apellidoPaterno)) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'El apellido paterno solo puede contener letras.',
-      icon: 'error',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
+      // Validar apellido paterno
+      if (!nombreRegex.test(this.cliente.apellidoPaterno)) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'El apellido paterno solo puede contener letras.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+        });
+        return;
+      }
 
-  // Validar apellido materno
-  if (!nombreRegex.test(this.cliente.apellidoMaterno)) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'El apellido materno solo puede contener letras.',
-      icon: 'error',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
+      // Validar apellido materno
+      if (!nombreRegex.test(this.cliente.apellidoMaterno)) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'El apellido materno solo puede contener letras.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+        });
+        return;
+      }
 
-  // Validar celulares
-  for (const celular of this.cliente.celulares) {
-    if (!celularRegex.test(celular)) {
-      Swal.fire({
-        title: 'Error!',
-        text: 'El celular debe contener solo 10 dígitos.',
-        icon: 'error',
-        confirmButtonText: 'Aceptar',
-      });
-      return;
-    }
-  }
+      // Validar celulares
+      for (const celular of this.cliente.celulares) {
+        if (!celularRegex.test(celular)) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'El celular debe contener solo 10 dígitos.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+          });
+          return;
+        }
+      }
 
-  // Validar tiempo de entrega
-  if (!tiempoEntregaRegex.test(this.equipo.tiempoEntrega)) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'El tiempo de entrega debe ser un número de 1 o 2 dígitos.',
-      icon: 'error',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
+      // Validar tiempo de entrega
+      if (!tiempoEntregaRegex.test(this.equipo.tiempoEntrega)) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'El tiempo de entrega debe ser un número de 1 o 2 dígitos.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+        });
+        return;
+      }
 
-  // Crear el objeto con la estructura requerida
-  const formData = {
-    cliente: {
-      ...this.cliente,
+      // Obtener el userId de localStorage
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'No se ha encontrado el ID del usuario.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+        });
+        return;
+      }
+
+      // Crear el objeto con la estructura requerida
+      const formData = {
+        cliente: {
+          ...this.cliente,
+        },
+        celular: {
+          celulares: this.cliente.celulares,
+        },
+        equipo: {
+          ...this.equipo,
+        },
+        servicio: {
+          observaciones: this.equipo.observaciones,
+          tiempo_entrega: this.equipo.tiempoEntrega,
+          medida_tiempo: this.equipo.medidaTiempo,
+          id_tipo_servicio: this.equipo.idTipoServicio,
+          id_trabajador: Number(userId), // Usar el userId de localStorage
+          costo: this.equipo.costo,
+          prioridad: this.equipo.prioridad,
+        },
+      };
+
+      try {
+        // Enviar el JSON al endpoint y capturar la respuesta
+        const response = await axios.post('http://localhost:3000/submitForm', formData);
+        
+        // Mostrar SweetAlert de éxito con el id_servicio
+        if (response.data.success) {
+          const idServicio = response.data.id_servicio; // Capturamos el id_servicio
+          this.$router.push({ name: 'hoja_servicio_print', params: { idServicio } });
+          Swal.fire({
+            title: 'Éxito!',
+            text: `El formulario se ha enviado correctamente. ID Servicio: ${idServicio}`,
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+
+        // Limpiar el formulario después de enviar
+         this.resetForm();
+      } catch (error) {
+        // Manejo de errores
+        Swal.fire({
+          title: 'Error!',
+          text: 'Hubo un problema al enviar el formulario. Intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+        });
+      }
     },
-    celular: {
-      celulares: this.cliente.celulares,
+
+    resetForm() {
+      // Reinicia los datos del formulario a sus valores iniciales
+      this.cliente = {
+        nombre: '',
+        apellidoPaterno: '',
+        apellidoMaterno: '',
+        domicilio: '',
+        email: '',
+        celulares: [''],
+      };
+      
+      this.equipo = {
+        idTipoEquipo: '',
+        estado: '',
+        idTipoServicio: '',
+        idAgregados: '',
+        descripcionAgregado: '',
+        marca: '',
+        serie: '',
+        modelo: '',
+        descripcion: '',
+        observaciones: '',
+        tiempoEntrega: null,
+        medidaTiempo: '',
+        costo: null,
+        prioridad: "No urgente",
+      };
     },
-    equipo: {
-      ...this.equipo,
-    },
-    servicio: {
-      observaciones: this.equipo.observaciones,
-      tiempo_entrega: this.equipo.tiempoEntrega,
-      medida_tiempo: this.equipo.medidaTiempo,
-      id_tipo_servicio: this.equipo.idTipoServicio,
-      id_trabajador: 1, // ID del jefe o trabajador por defecto
-    },
-  };
-
-  try {
-    // Enviar el JSON al endpoint y capturar la respuesta
-    const response = await axios.post('http://localhost:3000/submitForm', formData);
-    
-    // Mostrar SweetAlert de éxito con el id_servicio
-    if (response.data.success) {
-      const idServicio = response.data.id_servicio; // Capturamos el id_servicio
-      this.$router.push({ name: 'hoja_servicio_print', params: { idServicio } });
-      Swal.fire({
-        title: 'Éxito!',
-        text: `El formulario se ha enviado correctamente. ID Servicio: ${idServicio}`,
-        icon: 'success',
-        confirmButtonText: 'Aceptar',
-      });
-    }
-
-    // Limpiar el formulario después de enviar
-    // this.resetForm();
-  } catch (error) {
-    // Manejo de errores
-    Swal.fire({
-      title: 'Error!',
-      text: 'Hubo un problema al enviar el formulario. Intenta nuevamente.',
-      icon: 'error',
-      confirmButtonText: 'Aceptar',
-    });
-  }
-},
-
-
-resetForm() {
-  // Reinicia los datos del formulario a sus valores iniciales
-  this.cliente = {
-    nombre: '',
-    apellidoPaterno: '',
-    apellidoMaterno: '',
-    domicilio: '',
-    email: '',
-    celulares: [''],
-  };
-  
-  this.equipo = {
-    idTipoEquipo: '',
-    estado: '',
-    idTipoServicio: '',
-    idAgregados: '',
-    descripcionAgregado: '',
-    marca: '',
-    serie: '',
-    modelo: '',
-    descripcion: '',
-    observaciones: '',
-    tiempoEntrega: null,
-    medidaTiempo: '',
-  };
-},
-
 
     async fetchTiposEquipo() {
       const response = await axios.get('http://localhost:3000/api/tipos_equipo');
@@ -347,78 +357,78 @@ resetForm() {
     },
 
     async addTipoEquipo() {
-    const { value: nuevoTipo } = await Swal.fire({
-      title: 'Agregar nuevo tipo de equipo',
-      input: 'text',
-      inputLabel: 'Nombre del nuevo tipo de equipo',
-      inputPlaceholder: 'Ingrese el tipo de equipo',
-      showCancelButton: true,
-      confirmButtonText: 'Agregar',
-      cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
-        if (!value) {
-          return '¡Por favor ingrese un nombre!';
-        }
-      },
-    });
+      const { value: nuevoTipo } = await Swal.fire({
+        title: 'Agregar nuevo tipo de equipo',
+        input: 'text',
+        inputLabel: 'Nombre del nuevo tipo de equipo',
+        inputPlaceholder: 'Ingrese el tipo de equipo',
+        showCancelButton: true,
+        confirmButtonText: 'Agregar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+          if (!value) {
+            return '¡Por favor ingrese un nombre!';
+          }
+        },
+      });
 
-    if (nuevoTipo) {
-      const response = await axios.post('http://localhost:3000/api/tipos_equipo', { equipo: nuevoTipo });
-      this.equipo.idTipoEquipo = response.data.id_tipo_equipo; // Seleccionar el nuevo tipo
-      this.fetchTiposEquipo(); // Refrescar lista
-    }
-  },
+      if (nuevoTipo) {
+        const response = await axios.post('http://localhost:3000/api/tipos_equipo', { equipo: nuevoTipo });
+        this.equipo.idTipoEquipo = response.data.id_tipo_equipo; // Seleccionar el nuevo tipo
+        this.fetchTiposEquipo(); // Refrescar lista
+      }
+    },
 
-  async addTipoServicio() {
-    const { value: nuevoServicio } = await Swal.fire({
-      title: 'Agregar nuevo tipo de servicio',
-      input: 'text',
-      inputLabel: 'Nombre del nuevo tipo de servicio',
-      inputPlaceholder: 'Ingrese el tipo de servicio',
-      showCancelButton: true,
-      confirmButtonText: 'Agregar',
-      cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
-        if (!value) {
-          return '¡Por favor ingrese un nombre!';
-        }
-      },
-    });
+    async addTipoServicio() {
+      const { value: nuevoServicio } = await Swal.fire({
+        title: 'Agregar nuevo tipo de servicio',
+        input: 'text',
+        inputLabel: 'Nombre del nuevo tipo de servicio',
+        inputPlaceholder: 'Ingrese el tipo de servicio',
+        showCancelButton: true,
+        confirmButtonText: 'Agregar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+          if (!value) {
+            return '¡Por favor ingrese un nombre!';
+          }
+        },
+      });
 
-    if (nuevoServicio) {
-      const response = await axios.post('http://localhost:3000/api/tipos_servicio', { servicio: nuevoServicio });
-      this.equipo.idTipoServicio = response.data.id_tipo_servicio; // Seleccionar el nuevo servicio
+      if (nuevoServicio) {
+        const response = await axios.post('http://localhost:3000/api/tipos_servicio', { servicio: nuevoServicio });
+        this.equipo.idTipoServicio = response.data.id_tipo_servicio; // Seleccionar el nuevo servicio
 
-      this.fetchTiposServicio(); // Refrescar lista
-    }
-  },
+        this.fetchTiposServicio(); // Refrescar lista
+      }
+    },
 
-  async addAgregado() {
-    const { value: nuevoAgregado } = await Swal.fire({
-      title: 'Agregar nuevo agregado',
-      input: 'text',
-      inputLabel: 'Nombre del nuevo agregado',
-      inputPlaceholder: 'Ingrese el tipo de agregado',
-      showCancelButton: true,
-      confirmButtonText: 'Agregar',
-      cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
-        if (!value) {
-          return '¡Por favor ingrese un nombre!';
-        }
-      },
-    });
+    async addAgregado() {
+      const { value: nuevoAgregado } = await Swal.fire({
+        title: 'Agregar nuevo agregado',
+        input: 'text',
+        inputLabel: 'Nombre del nuevo agregado',
+        inputPlaceholder: 'Ingrese el tipo de agregado',
+        showCancelButton: true,
+        confirmButtonText: 'Agregar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+          if (!value) {
+            return '¡Por favor ingrese un nombre!';
+          }
+        },
+      });
 
-    if (nuevoAgregado) {
-      const response = await axios.post('http://localhost:3000/api/agregados', { tipoAgregado: nuevoAgregado });
-      this.equipo.idAgregados = response.data.id_agregado; // Seleccionar el nuevo agregado
-      this.fetchAgregados(); // Refrescar lista
-    }
-  },
-
+      if (nuevoAgregado) {
+        const response = await axios.post('http://localhost:3000/api/agregados', { tipoAgregado: nuevoAgregado });
+        this.equipo.idAgregados = response.data.id_agregado; // Seleccionar el nuevo agregado
+        this.fetchAgregados(); // Refrescar lista
+      }
+    },
   }
 };
 </script>
+
 
 <style scoped>
 @keyframes slideIn {
@@ -646,5 +656,9 @@ input[type="radio"]:checked + .option-label {
     transform: scale(1.05);
 }
 
+.urgencia{
+  width: 150px;
+  margin-top: 15px;
+}
 
 </style>
