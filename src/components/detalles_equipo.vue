@@ -1,74 +1,79 @@
 <template>
   <menu-lateral />
   <div class="details-container">
-
     <div class="container">
-    <h1>Detalles del Equipo</h1>
-    <div v-if="equipo" class="details-content">
+      <h1>Detalles del Equipo</h1>
+      <div v-if="equipo" class="details-content">
+        <!-- Detalles del equipo -->
+        <div class="detail-list">
+          <div class="detail-item" v-for="(value, key) in equipo" :key="key">
+            <span class="label">{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</span>
+            <span class="value">{{ value }}</span>
+          </div>
+        </div>
 
+        <!-- Descripción del problema -->
+        <div class="detail-item">
+          <span class="label">Descripción del problema:</span>
+          <textarea v-model="descripcionProblema" disabled rows="3"></textarea>
+        </div>
 
-      <!-- Detalles del equipo -->
-      <div class="detail-list">
-        <div class="detail-item">
-          <span class="label">Nombre:</span>
-          <span class="value">{{ equipo.nombre }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Modelo:</span>
-          <span class="value">{{ equipo.modelo }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Estado:</span>
-          <span class="value">{{ equipo.estado }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Última revisión:</span>
-          <span class="value">{{ equipo.ultimaRevision }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Propietario:</span>
-          <span class="value">{{ equipo.propietario }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">numero:</span>
-          <span class="value">{{ equipo.numero }}</span>
-        </div>
-      </div>
+        <!-- Sección para agregar pasos al servicio -->
+        <div class="maintenance-section">
+          <h2>Pasos del Servicio</h2>
+          <div class="add-step">
+            <input v-model="nuevoPaso.nombre" placeholder="Nombre del paso" />
+            <input v-model="nuevoPaso.descripcionGeneral" placeholder="Descripción general" />
+            <textarea v-model="nuevoPaso.descripcionDetallada" placeholder="Descripción detallada"></textarea>
+            <button @click="agregarPaso" class="add-button">Agregar Paso</button>
+          </div>
 
-      <!-- Descripción del problema -->
-      <div class="detail-item">
-        <span class="label">Descripción del problema:</span>
-        <textarea v-model="descripcionProblema" disabled rows="3"></textarea>
-      </div>
-      
-      
+          <!-- Lista de pasos agregados -->
+          <ul>
+            <li v-for="(paso, index) in mantenimientoPasos" :key="index" :class="{ completed: paso.completado, editing: paso.editando }">
+              <input type="checkbox" v-model="paso.completado" />
+              <span v-if="!paso.editando">{{ paso.nombre }} - {{ paso.descripcionGeneral }}</span>
+              
+              <!-- Modo de edición de paso -->
+              <div v-else class="edit-step">
+                <input v-model="paso.nombre" placeholder="Nombre del paso" />
+                <input v-model="paso.descripcionGeneral" placeholder="Descripción general" />
+                <textarea v-model="paso.descripcionDetallada" placeholder="Descripción detallada"></textarea>
+              </div>
+
+              <button v-if="!paso.editando" @click="activarEdicion(paso)" class="edit-button">Editar</button>
+              <button v-if="paso.editando" @click="confirmarEdicion(paso)" class="confirm-button">Confirmar</button>
+              <button @click="eliminarPaso(index)" class="delete-button">Eliminar</button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Botón de Subir Informe -->
         <button @click="subirInforme" class="submit-button">Subir Informe</button>
+        <button @click="irCotizacion" class="back-button">Ir a Cotización</button>
+        <button @click="goBack" class="back-button">Volver</button>
       </div>
     </div>
-
-   
   </div>
-
 </template>
 
 <script>
 import MenuLateral from '@/components/menu.vue';
+
 export default {
   components: {
-        MenuLateral, // Registrar el componente
-    },
+    MenuLateral,
+  },
   data() {
     return {
       equipo: null,
-      descripcionProblema: 'Pantalla rota debido a caída. Se requiere diagnóstico y reparación completa.', 
-      mantenimientoPasos: [
-        { descripcion: 'Diagnóstico inicial', completado: false, detalle: 'Abrir el equipo y revisar componentes internos como tarjeta madre, batería, etc.' },
-        { descripcion: 'Reemplazo de pantalla', completado: false, detalle: 'Desmontar la pantalla rota y colocar una nueva pantalla compatible.' },
-        { descripcion: 'Revisión de conexiones internas', completado: false, detalle: 'Verificar que todos los cables y conexiones internas estén correctas.' },
-        { descripcion: 'Pruebas de funcionalidad', completado: false, detalle: 'Encender el equipo y verificar que la pantalla y demás componentes funcionen adecuadamente.' },
-        { descripcion: 'Limpieza final', completado: false, detalle: 'Limpiar el equipo tanto por fuera como por dentro, y realizar un pulido si es necesario.' },
-      ],
-      pasoMostrado: null, // Variable para saber qué paso está siendo mostrado
+      descripcionProblema: 'Pantalla rota debido a caída. Se requiere diagnóstico y reparación completa.',
+      mantenimientoPasos: [],
+      nuevoPaso: {
+        nombre: '',
+        descripcionGeneral: '',
+        descripcionDetallada: '',
+      },
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -77,11 +82,8 @@ export default {
     });
   },
   methods: {
-    mostrarDetalle(paso) {
-      this.pasoMostrado = paso;
-    },
-    ocultarDetalle() {
-      this.pasoMostrado = null;
+    irCotizacion() {
+      this.$router.push({ name: 'cotizacion' });
     },
     updateEquipo() {
       this.equipo = this.getEquipo();
@@ -94,18 +96,24 @@ export default {
         ultimaRevision: '2024-09-16',
         propietario: 'Tadeo Martinez',
         numero: '951 396 9605',
-        fotos: [
-          'https://http2.mlstatic.com/D_NQ_NP_2X_839299-MLM73906886025_012024-F.webp',
-          'https://http2.mlstatic.com/D_NQ_NP_2X_979819-MLM75962726731_042024-F.webp',
-          'https://http2.mlstatic.com/D_NQ_NP_2X_622676-MLM75792648390_042024-F.webp',
-        ],
       };
     },
-    puedeCompletarPaso(index) {
-      if (index === 0) {
-        return true;
+    agregarPaso() {
+      if (this.nuevoPaso.nombre && this.nuevoPaso.descripcionGeneral && this.nuevoPaso.descripcionDetallada) {
+        this.mantenimientoPasos.push({ ...this.nuevoPaso, completado: false, editando: false });
+        this.nuevoPaso = { nombre: '', descripcionGeneral: '', descripcionDetallada: '' };
+      } else {
+        alert('Completa todos los campos para agregar un paso.');
       }
-      return this.mantenimientoPasos[index - 1].completado;
+    },
+    activarEdicion(paso) {
+      paso.editando = true;
+    },
+    confirmarEdicion(paso) {
+      paso.editando = false;
+    },
+    eliminarPaso(index) {
+      this.mantenimientoPasos.splice(index, 1);
     },
     subirInforme() {
       const pasosCompletados = this.mantenimientoPasos.filter(paso => paso.completado);
@@ -121,33 +129,35 @@ export default {
 </script>
 
 
+
 <style scoped>
 @keyframes slideIn {
   from {
     opacity: 0;
     transform: translateY(-50px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-.container{
+
+.container {
   margin-top: 10px;
   background-color: #1a1a1a;
   color: white;
-  padding: 40px 20px 20px; 
+  padding: 40px 20px 20px;
   max-width: 750px;
-  margin: 0 auto; 
+  margin: 0 auto;
   border-radius: 15px;
-  box-shadow: 18px 10px 15px -3px rgba(0,0,0,0.4);
+  box-shadow: 18px 10px 15px -3px rgba(0, 0, 0, 0.4);
 }
+
 .details-container {
-  padding: 40px 20px 100px; 
+  padding: 40px 20px 100px;
   max-width: 750px;
-  margin: 0 auto; 
-  position: relative; 
+  margin: 0 auto;
+  position: relative;
   top: 0px;
   left: 7%;
   animation: slideIn 0.5s ease forwards;
@@ -159,20 +169,6 @@ export default {
   font-size: 24px;
   font-weight: bold;
   text-align: center;
-}
-
-.carousel {
-  margin-bottom: 20px;
-}
-
-.carousel-inner img {
-  border-radius: 5px;
-  
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-  filter: invert(1);
 }
 
 .details-content {
@@ -212,29 +208,71 @@ textarea {
   resize: none;
 }
 
-.maintenance-section {
+.service-steps {
   margin-top: 40px;
   background-color: #2a2a2a;
   padding: 20px;
   border-radius: 10px;
 }
 
-.maintenance-section ul {
+.service-steps h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: #e0e0e0;
+  text-align: center;
+}
+
+.service-steps input[type="text"],
+.service-steps textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  border-radius: 5px;
+}
+
+.service-steps button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #ffc107;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.service-steps button:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}
+
+.service-steps ul {
   list-style: none;
   padding: 0;
+  margin-top: 20px;
 }
 
-.maintenance-section li {
-  margin-bottom: 10px;
+.service-steps li {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  background-color: #2a2a2a;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
 }
 
-.maintenance-section input[type="checkbox"] {
+.service-steps input[type="checkbox"] {
   margin-right: 10px;
 }
 
-.maintenance-section .completed {
+.service-steps .completed {
   text-decoration: line-through;
   color: #808080;
 }
@@ -277,12 +315,87 @@ textarea {
   transform: scale(1.05);
 }
 
-.tooltip {
-  background-color: #f0f0f0;
+/* Estilos nuevos para pasos de mantenimiento */
+.maintenance-section {
+  margin-top: 40px;
+  background-color: #2a2a2a;
+  padding: 20px;
+  border-radius: 10px;
+}
+.maintenance-section ul {
+  list-style: none;
+  padding: 0;
+}
+.maintenance-section li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  background-color: #3a3a3a;
   padding: 10px;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 10;
 }
+.add-step input,
+.add-step textarea {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  border: 1px solid #555;
+  border-radius: 5px;
+}
+.add-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.add-button:hover {
+  background-color: #45a049;
+}
+
+/* Botones de acción en cada paso */
+.edit-button,
+.confirm-button,
+.delete-button {
+  background-color: #555;
+  color: white;
+  padding: 6px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.edit-button:hover {
+  background-color: #007bff;
+}
+.confirm-button:hover {
+  background-color: #28a745;
+}
+.delete-button:hover {
+  background-color: #dc3545;
+}
+
+/* Estilos para el estado de edición */
+.editing {
+  background-color: #4a4a4a;
+  border: 2px dashed #5d9cec;
+  padding: 15px;
+}
+.editing input,
+.editing textarea {
+  background-color: #5d5d5d;
+  color: #e0e0e0;
+  border: 1px solid #777;
+  padding: 8px;
+  border-radius: 5px;
+  width: 100%;
+  margin-top: 5px;
+}
+
+
 
 </style>

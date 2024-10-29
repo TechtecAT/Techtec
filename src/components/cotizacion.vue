@@ -1,5 +1,7 @@
 <template>
+ <div class="container">
     <div class="quote-container">
+
       <h1>Cotización del Equipo</h1>
       <div v-if="equipo" class="quote-content">
   
@@ -84,6 +86,7 @@
         <button @click="goBack" class="back-button">Volver al Servicio</button>
       </div>
     </div>
+  </div>
   </template>
   
   <script>
@@ -194,9 +197,10 @@
   color: #f1f1f1;
   border-radius: 10px;
   max-width: 800px;
-  margin: 20px auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
+
+
 
 .quote-container h1,
 .quote-container h2 {
